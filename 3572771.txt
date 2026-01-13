@@ -1,0 +1,1654 @@
+. 
+. 
+ Latest updates: hps://dl.acm.org/doi/10.1145/3572771
+. 
+. 
+ SURVEY
+A Survey on Exotic Signatures for Post-quantum
+Blockchain: Challenges and Research Directions
+MAXIME BUSER, Monash University, Melbourne, VIC, Australia
+. 
+ RAFAEL DOWSLEY, Monash University, Melbourne, VIC, Australia
+. 
+ MUHAMMED F ESGIN, Monash University, Melbourne, VIC, Australia
+. 
+ CLÉMENTINE GRITTI, University of Canterbury, Christchurch, CAN,
+New Zealand
+. 
+ SHABNAM KASRA KERMANSHAHI, RMIT University, Melbourne,
+VIC, Australia
+. 
+ VERONIKA KUCHTA, Florida Atlantic University, Boca Raton, FL,
+United States
+. 
+ View all
+. 
+. 
+ Open Access Support provided by:
+. 
+ University of Canterbury
+. 
+ Monash University
+. 
+ RMIT University
+. 
+ Florida Atlantic University
+. 
+ Virginia Polytechnic Institute and State University
+. 
+ Monash University Malaysia
+. 
+ PDF Download
+3572771.pdf
+02 January 2026
+Total Citations: 33
+Total Downloads:
+2595
+. 
+. 
+ Published: 02 March 2023
+Online AM: 01 December 2022
+Accepted: 08 November 2022
+Revised: 04 November 2022
+Received: 06 February 2022
+. 
+. 
+ Citation in BibTeX format
+. 
+. 
+ ACM Computing Surveys, Volume 55, Issue 12 (December 2023)
+hps://doi.org/10.1145/3572771
+EISSN: 1557-7341
+.
+
+251
+A Survey on Exotic Signatures for Post-quantum Blockchain:
+Challenges and Research Directions
+MAXIME BUSERand RAFAEL DOWSLEY, Monash University, Australia
+MUHAMMED ESGIN, Monash University, Australia, and CSIRO’s Data61, Australia
+CLÉMENTINE GRITTI, University of Canterbury, New Zealand
+SHABNAM KASRA KERMANSHAHI, RMIT University, Australia
+VERONIKA KUCHTA, Florida Atlantic University, Australia
+JASON LEGROW, Virginia Polytechnic Institute and State University, United States
+JOSEPH LIU, Monash University, Australia
+RAPHAËL PHAN, Monash University, Malaysia
+AMIN SAKZAD, RON STEINFELD,a n dJIANGSHAN YU, Monash University, Australia
+Blockchain technology provides efficient and secure solutions to various online activities by utilizing a
+wide range of cryptographic tools. In this article, we survey the existing literature on post-quantum se-
+cure digital signatures that possessexotic advanced features and that are crucial cryptographic tools used
+intheblockchainecosystemfor(1)accountmanagement,(2)consensusefficiency,(3)empoweringscriptless
+blockchain,and(4)privacy.Theexoticsignaturesthatweparticularlyfocusoninthisworkarethefollowing:
+multi-/aggregate, threshold, adaptor, blind, and ring signatures. Herein the term "exotic" refers to signatures
+with properties that are not just beyond the norm for signatures, e.g., unforgeability, but also imbue new
+forms of functionalities. Our treatment of such exotic signatures includes discussions on existing challenges
+andfutureresearchdirectionsinthepost-quantumspace.Wehopethatthisarticlewillhelptofosterfurther
+researchtomakepost-quantumcryptographymoreaccessiblesothatblockchainsystemscanbemadeready
+in advance of the approaching quantum threats.
+CCS Concepts: •Security and privacy→Digital signatures;
+Additional Key Words and Phrases: Post-quantum cryptography, digital signatures, blockchain applications
+Authors’ addresses: M. Buser, R. Dowsley, J. Liu, A. Sakzad, R. Steinfeld, and J. Yu, Monash University, Australia; emails:
+{maxime.buser, rafael.dowsley, joseph.liu, amin.sakzad, ron.steinfeld, jiangshan.yu}@monash.edu; M. Esgin, Monash Uni-
+versity, Australia, and CSIRO’s Data61, Australia; email: muhammed.esgin@monash.edu; C. Gritti, University of Canter-
+bury, New Zealand; email: clementine.gritti@canterbury.ac.nz; S. Kasra Kermanshahi, RMIT University, Australia; email:
+shabnam.kasra.kermanshahi@rmit.edu.au; V. Kuchta, Florida Atlantic University, Australia; email: vkuchta@fau.edu; J.
+LeGrow, Virginia Polytechnic Institute and State University, United States; email: jlegrow@vt.edu; R. Phan, Monash Uni-
+versity, Malaysia; email: raphael.phan@monash.edu.
+Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee
+provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and
+the full citation on the first page. Copyrights for components of this work owned by others than ACM must be honored.
+Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires
+prior specific permission and/or a fee. Request permissions frompermissions@acm.org.
+© 2023 Association for Computing Machinery.
+0360-0300/2023/03-ART251 $15.00
+https://doi.org/10.1145/3572771
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:2 M. Buser et al.
+ACM Reference format:
+MaximeBuser,RafaelDowsley,MuhammedEsgin,ClémentineGritti,ShabnamKasraKermanshahi,Veronika
+Kuchta, Jason LeGrow, Joseph Liu, Raphaël Phan, Amin Sakzad, Ron Steinfeld, and Jiangshan Yu. 2023. A
+SurveyonExoticSignaturesforPost-quantumBlockchain:ChallengesandResearchDirections. ACMComput.
+Surv.55, 12, Article 251 (March 2023), 32 pages.
+https://doi.org/10.1145/3572771
+1 INTRODUCTION
+Cryptographic algorithms play a key role in blockchain systems to guarantee security, preserve
+privacy, and improve system performance. Digital signatures, in particular, are one of the key
+cryptographic primitives for blockchains. For example, Bitcoin [120] deploys theElliptic Curve
+Digital Signature Algorithm (ECDSA)to manage coin ownership, so that funds can only be
+spent by their rightful owners. In particular, a classic signature scheme consists of a public verifi-
+cation key and a private signing key. A Bitcoin address is a 160-bit hash derived deterministically
+from the ECDSA verification key. Anyone who possesses the corresponding ECDSA signing key
+hastherighttospendthefundrepresentedbytheBitcoinaddress.Atransactiontotransferfunds
+fromone(ormore)BitcoinaddresstootherBitcoinaddressesisauthorizedifallinputs(i.e.,Bitcoin
+addresses of the to-be-spent funds) are signed by using the corresponding signing keys.
+Withtheadvancementofblockchains(see,e.g.,[ 154]),signatureswithspecialfeaturesandfunc-
+tionalitiesbeyondtheconventionalunforgeability(i.e., exoticsignatures)havealsobeenleveraged
+to tackle various issues therein. In fact, there exists a rich literature in using different signature
+schemes in digital cash before the birth of the blockchain, such as using blind signatures to pre-
+ventthesigner(i.e.,thepayee)frombeinglinkedtoitstransactions[ 42].Othersignatureschemes,
+such as adaptor, multi-, aggregate, threshold, and ring signatures, also play important roles in
+the blockchain. They empower blockchains with additional features in four main aspects, namely
+account management, consensus efficiency, empowering scriptless blockchains, and user privacy.
+For account management, Bitcoin natively supports multi-signature addresses (with
+OPCHECKMULTISIG) via its Non-Turing complete script language [23], to enable jointly owned
+asset management. A multi-signature address specifies a list ofn ECDSA public keys and a
+threshold t ≤n, where the holders of at leastt corresponding secret keys are each required to
+provide a signature to validate the transaction spending the jointly owned coin. While using
+multi-signature to manage jointly owned assets provides accountability, i.e., the set of signers is
+made transparent on blockchain, it has its own limit. First, with Bitcoin, the numbern of keys
+has a hardcoded limit, making it non-scalable. In addition, it also incurs more transaction fees
+due to the larger size of a transaction (containingt signatures). Last, this is not privacy-friendly
+and may not be suitable for privacy-aware applications. Threshold signature schemes have been
+proposed to improve jointly owned asset management, where the ability to construct a single
+signatureisdistributedto nparticipants,suchthatproducingasignaturerequirestheinvolvement
+of t participants. This addresses the weaknesses of multi-signature transactions and has been
+implemented in several services, such as Binance, Wanchain, and Fusion.
+For consensus efficiency, traditional Byzantine Fault Tolerant (BFT) protocols, such as
+PBFT [38], use an all-to-all message pattern to commit a decision block. To reduce the commu-
+nication complexity fromO(n2) toO(n), aggregated or threshold signatures have been leveraged
+in several blockchain consensus protocols, such as SBFT [77], HotStuff [155], and Damysus [55].
+Layer 2 protocols are one of the promising techniques to scale blockchains. In particular, layer
+2 protocols, such as payment channels, aim to improve the throughput of blockchains by only
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:3
+recording a summary of a potentially large number of transactions into the blockchain. Taking
+payment channel as an example, two users establish a payment channel on a blockchain by com-
+mitting pre-defined collaterals (i.e., coins) on the blockchain and start to update the balance of
+the channel between the two users according to the agreed payments. Upon the channel closure,
+they only need to record the final state of the balance to represent all intermediate payments
+on the blockchain. Layer 2 protocols normally require the support of script language, making it
+challengingforscriptlessblockchains(suchasMoneroorZCash)toadoptthetechnique.Adaptor
+signatures have been considered to enable layer 2 protocols on scriptless blockchains [7,117].
+Exotic signatures have also been leveraged to protect blockchain privacy. The two main types
+ofsignaturesforblockchainprivacyareblindsignatureandringsignature.Theuseofblindsigna-
+ture has been proposed to improve Bitcoin privacy by constructing a coin mixing service, such as
+BlindCoin [147], to hide the payment links. CryptoNote[49] was proposedto provide transaction
+untraceability in blockchain-based cryptocurrencies. Unlike in Bitcoin where an observer of the
+blockchain can learn the trace of all coins, CryptoNote hides the trace of coins by using linkable
+ring signature [122]. In particular, linkable ring signature helps to hide the real coin to spend into
+a number of other coins, called mix-ins, leading to a better privacy guarantee. To date, Monero is
+the most famous privacy-preserving cryptocurrency with a market cap of $2.6 Billion USD.1
+While the vital role of cryptographic primitives is well recognized, the advancement of quan-
+tum computing raises a growing concern on the resilience of deployed cryptographic algorithms
+against quantum adversaries, as existing computational hardness assumptions may not hold any-
+more [11]. For example, Shor’s algorithm makes it possible to solve the problems of large inte-
+ger factorization and discrete logarithm [142]. The recent announcements of achieving “quantum
+supremacy”byGoogle[ 6]andIBM[ 127]furtherstrengthentheurgetohavepost-quantumsecure
+blockchains.
+Contribution. A systematic analysis on the landscape of post-quantum secure cryptographic
+constructions for exotic signatures is desired but missing from the literature. This article fills the
+g a pb yp r o v i d i n gas u r v e yo npost-quantum (PQ)exotic signatures needed by blockchain sys-
+tems. Considering that all results related to exotic signatures is too much to cover in a single
+article, we limit the scope of the article based on the following. First, to restrict the number of
+different signature types we discuss, we focus on the exotic signatures that have an existing ma-
+jor blockchain application, and not those that maypotentially be useful in the blockchain setting.
+Since the blockchain application space spans a wide range of real-life settings, it is likely that any
+signature-likeschememaypotentiallyfindablockchainapplication,butitisnotpossibletocover
+all such schemes in a single article. Second, since we are motivated by a real-life application (i.e.,
+blockchain),wefocusonthemostpracticallyefficientresultsanddonotdiscussthemoretheoret-
+ical or practically less efficient results. Moreover, post-quantum ordinary signatures have already
+reachedacertainmaturityandtherehasalreadybeenworkssuchas[ 44]thatsurveythem.There-
+fore, we also do not discuss particular post-quantum ordinary signature proposals in this work.
+When considering post-quantum cryptographic protocols, it is natural to ask what quantum
+capabilities to consider for the adversary. Naturally we must allow the adversary the ability to
+run quantum algorithms, and beyond this, some works allow quantuminteractive capabilities—
+in particular, we may consider quantum access to random oracles (the “quantum random oracle
+model” [26]) or to oracles representing honest parties (e.g., the EUF-qCMA model [29] allows the
+adversary quantum access to a signing oracle). In this article, we will not consider the quantum
+1https://coinmarketcap.com/currencies/monero/(accessed January 31, 2022).
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:4 M. Buser et al.
+randomoraclemodelorquantuminteractionswithsigningoracles.Sinceweareconsideringonly
+classical protocols, there is no real-world scenario in which an adversary would have quantum
+accesstosignaturegeneration,sothisrestrictionisquitereasonable.Thequantumrandomoracle
+model, on the other hand, would be reasonable to consider—however, the field of post-quantum
+exoticsignaturesisrathernew,andhassimplynotmaturedtothepointthatthequantumrandom
+oracle model has been sufficiently considered in the literature. Thus, we leave this consideration
+for future work.
+There are some (planned) efforts by major blockchain applications to support post-quantum
+cryptographictools.Forexample,theEthereum2.0upgrade 2 isexpectedtosupportsomequantum-
+safe cryptographic tools. Moreover, Algorand has recently introducedstate proofs,3 where a post-
+quantumsignaturescheme(basedonlatticeproblems)isused.Beyondthese,wearenotawareof
+a large-scale adoption of PQ tools in the blockchain setting and hope our work will pave the way
+toward a wider adoption of PQ cryptography for blockchain applications.
+Therestofthearticleisstructuredasfollows.InSection 2,wediscussthemainsecurityassump-
+tions that are believed to be quantum-safe. Particularly, we discuss assumptions based on hash
+functions, lattices, isogenies, codes, and multivariate polynomials. Then, we provide an overview
+on the role of different types of commonly deployed exotic signatures in blockchain in Section3.
+In Section4, we first overview the general zero-knowledge proof paradigms used to construct a
+largesubsetofthepost-quantumexoticsignatureswediscussinthiswork.Ourgoalhereisnotto
+discuss particular proof systems, but rather to overview the common building stones in order not
+to repeat the same discussions for different signature types. For example, the “Fiat-Shamir with
+Aborts”paradigm(discussedinSection 4)inthecontextoflattice-basedzero-knowledgeproofsis
+used to construct threshold, adaptor, and ring signatures. Then, Section4 continues to our main
+discussion on different types of PQ exotic signatures, including multisignature and aggregate sig-
+nature (Section4.1), threshold signature (Section4.2), adaptor signature (Section4.3), and blind
+signature and ring signature (Section4.4).
+2 POST-QUANTUM SECURITY ASSUMPTIONS
+While most of the currently deployed cryptographic schemes rely on the two main classical secu-
+rity assumptions, namely the integer factorization problem or discrete logarithm problem, quan-
+tum computers will make such schemes obsolete. The well-known Shor’s and Grover’s algorithm
+run on a quantum computer will be able to solve the two above-mentioned security assumptions
+in polynomial time and therefore break public-key cryptography relying on these assumptions.
+In contrast to the pre-quantum cryptographic schemes, their post-quantum counterparts rely on
+mathematicalhardnessproblemsthatarebelievedtoremainhardevenwiththepresenceofaquan-
+tumcomputer.Themainsuchpost-quantumhardnessassumptionswillbepresentedinthesubse-
+quentsections.Asetofveryrecentworks(afterourliteraturereview)haveshowntheinsecurityof
+some assumptions discussed in this section. For historical reasons, we still describe these assump-
+tionsandmarkthemby ⊘inTable 1toindicatethattheyare(asymptoticallyorpractically)broken.
+2.1 Hash-based Assumptions
+Hash-basedorsymmetrickey-basedcryptographyisoneofthecandidatestodesignquantum-safe
+signatureschemes.Oneofthemainfeaturesofhash-basedcryptographyisthatthesecurityofthe
+schemes relies solely on the collision resistance of a hash function. Even if a used hash-function
+becomes insecure, it can be replaced by another secure hash-function without the need to use
+2See https://blog.ethereum.org/2015/12/24/understanding-serenity-part-i-abstraction/ (accessed on August 9, 2022).
+3See https://developer.algorand.org/docs/get-details/algorand_consensus/#state-proof-keys (accessed on August 9, 2022).
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:5
+any other mathematical hardness assumption. One of the first hash-based digital signatures was
+introduced by Merkle in 1989 [114]. An earlier work by Lamport [94] in 1979 presented a one-
+time signature that can be constructed from any secure hash-function. This work represents an
+important component in many follow-up constructions of hash-based signature schemes.
+A hash functionHis a function:
+H: {0,1}∗→{0,1}n,D ←H(m), (1)
+that maps an arbitrary-length messagem to ann-bit hash value denoted as the digestD.Ah a s h
+function is expected to satisfy three properties:
+•PreimageResistance:Knowingthedigest D,itiscomputationallyinfeasibletofindaninput
+m s.t. H(m) = D.
+•CollisionResistance:Giventwoinputs m1 /nequalm2,H(m1) = H(m2)happenswithanegligible
+probability.
+•Second Preimage Resistance: Knowing an inputm, it is computationally infeasible to find
+m′/nequalm s.t. H(m′) = H(m).
+A symmetric encryption scheme is defined by a tuple of three algorithms(KeyGen,Enc,Dec):
+•KeyGen: This generates a secret keysk ∈{0,1}n.
+•Enc: This takes as inputs a messagem and the secret keysk and outputs a ciphertextct.
+•Dec: This takes as inputs a ciphertext and the secret keysk and outputs the corresponding
+plaintext.
+Symmetricencryptionschemesareabletosatisfythepropertyofexistentialunforgeabilityunder
+the chosen message. The first important element to know is that its security is only affected by
+Grover’salgorithmandnotbyShor’salgorithm.Grover’salgorithmcanrecoverasecretkeyorthe
+inputofahashfunctionin √n quantumqueries,where n isthesizeofthesecretkeyorsizeofthe
+hash outputs. This means that to counter this quantum Grover algorithm, hash-based primitives
+simply double the size of the secret keys or the size of the digests.
+2.2 Lattice-based Assumptions
+Lattice-basedcryptographyisapromisingcandidateforquantum-safecryptographyastheirsecu-
+rity proofs are based on worst-case hardness and the corresponding constructions enjoy efficient
+implementations. In his seminal work, Ajtai [1] showed a connection between worst-case and
+average-case hardness and the suitability of lattices in cryptography. In this section we provide
+some of the main notions and definitions of lattice-basedcryptography.An dimensional lattice is
+a set of integer linear combinations of basis vectorsb1,..., bn ∈Rn:
+L(b1,..., bn) =
+⎧⎪⎨⎪⎩
+n∑
+i=1
+xibi|xi ∈Z
+⎫⎪⎬⎪⎭
+.
+The set of basis vectors in denoted byB, i.e.,B = {b1,..., bn}. The most basic geometric quantity
+about a lattice is its minimum, aka Minkovski’s first minimum. For ann-dimensional latticeL its
+minimumλ(L)isthelengthoftheshortestnon-zerovectorof L,i.e., λ(L) = min
+(
+∥b∥:b ∈L\0
+)
+.
+The most well-known lattice-based hardness problems introduced by Ajtai [1] are the following:
+Shortest Vector Problem (SVP):G i v e nab a s i sB, find the shortestv ∈L(B),w h e r ev /nequal0.
+γ-ShortestVectorProblem( γ-SVP):Givenabasis Bforan n-dimensionallattice L,findavector
+v ∈L with 0<∥v∥≤γλ(L).
+Note: Forγ >2O(n) theγ-SVP problem is easy to solve by using the LLL algorithm [97] in polyno-
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:6 M. Buser et al.
+mial time. However, forγ <O(1) the problem is NP hard and thus very unlikely to be solved in
+polynomial time.
+Closest Vector Problem (CVP):Given a basisB and a target vectort, find the lattice point
+v ∈L(B) that is closest tot.
+Shortest Independent Vectors Problem (SIVP):Given a basisB,fi n dn linearly independent
+lattice vectorsS = {s1,..., sn}that minimize the norm∥S∥= maxi ∥si∥≤β,w h e r ei ∈[1,n]a n d
+β is an upper bound of the Euclidean norm.
+In1997,Ajtai[ 1]introducedtheShortIntegerSolutionproblem,whichservedasthebaseforone-
+way and collision-resistant hash functions.
+ShortIntegerSolution(SIS)Problem[ 1]:Given muniformlyrandomvectors ai ∈Zn
+q thatform
+the columns of a matrixA ∈Zn×m
+q , the problem is to find a non-zero integer vectorv ∈Zm of
+Euclidean norm∥v∥≤β for a positive realβ, such thatAv = 0 mod q.
+Many of the lattice-based constructions we address in this article are based on the conjectured
+hardnessofthe LearningWithErrors(LWE) problem,whichwasintroducedbyRegev[ 134]in
+2005. It is defined given a probability distributionχ on Zq, normally taken to be a normal distri-
+bution with standard deviationσ:
+Learning With Errors (LWE) Problem [134]: Given parametersq,n,m,α, a matrixA ←↩
+U(Zm×n
+q ) andy = A·s +e mod q,w h e r ee ←↩χm
+αq with standard deviationαq ands ←↩U(Zn
+q),
+finds.
+Corresponding to the above-stated Search LWE problem, there exists also a Decision LWE prob-
+lem where the goal is to distinguishy as computed above from a randomy ←↩U(Zn
+q).
+TheLWEproblemisbelievedtobeveryhard,withthebest-knownalgorithmssolvingtheproblem
+in time that is exponential in the lattice dimensionn. We remark that SIS and LWE problems are
+averagecaseapproximationvariantsofSVPandCVPfortheclassof q-arylatticesdefinedover Zq.
+Practical lattice-based cryptographic algorithms often use algebraically structured variants of the
+SISandLWEproblemsdefinedoverpolynomialringssuchas Rq = Zq[X]/(XN +1),with N = 2k,
+which can be exploited to reduce communication/storage and computational costs. In particular,
+theR-SISproblemwasintroducedanditshardnessstudiedin[ 104,116,129],andtheR-LWEprob-
+lemwasintroducedanditshardnessstudiedin[ 106,143].Bothringproblemsarecommonlyused
+structuredvariantsofSISandLWE,where Zq intheunstructuredvariantsisreplacedby Rq.More
+flexibility in the lattice dimension is offered by the generalmodule variants of those problems: M-
+LWE introduced in [32] and M-SIS introduced in [95]; the hardness of both problems was studied
+in[95].Themoduleproblemsinfactgeneralizetheirunstructuredandringvariants,includingthe
+latterasspecialcases:themoduleproblemsaredefinedwithrespecttoamatrix A ∈Rm×n
+q andthe
+casesn = 1a n dN = 1 correspond to the ring and unstructured variants, respectively.
+2.3 Isogeny-based Assumptions
+Isogeny-based protocols are built on the assumption that, given two elliptic curves, it is generally
+difficult to find an isogeny of a specific form (which depends on the protocol being considered)
+betweenthem.Isogeny-basedexoticsignatureprotocolsarebuiltonessentiallytwokindsofprob-
+lems:thosethatresemblethe“computationalsupersingularisogenyproblemwithtorsionpointin-
+formation”[88]andthosethatresemble“computationalgroupactioninversion”[ 40]fortheaction
+of the ideal class group. In this section we briefly introduce the fundamental algebraic-geometric
+definitions and these computational problems.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:7
+An elliptic curveE in Montgomery form defined over a fieldk is the set ofk-solutions to an
+equation
+E/k: y2 = x3 +Ax2 +x
+for someA ∈k \{−2,2}, along with a distinguished point∞. The constantA is called the Mont-
+gomery coefficient, and we letEA denote the curve with Montgomery coefficientA. An elliptic
+curve is a group under the chord-and-tangent law, with∞acting as the group identity. We define
+thesetof k-rationalpointsof EA tobe EA(k) = {(x,y) ∈EA : x,y ∈k}.Infact, EA(k)isasubgroup
+of EA. For any integerN,w el e tEA[N] = {P ∈EA : NP = ∞}denote the set ofN-torsion points
+ofEA. It is well known that as long asN is coprime to chark,w eh a v eEA[N] /simequalZ/NZ ⊕Z/NZ.
+Every elliptic curve is either ordinary or supersingular. There are many equivalent characteri-
+zations of these notions; in isogeny-based cryptography we work over finite fieldsk = GF(p) or
+k =GF(p2), and in this setting we have
+EA[pn] /simequal
+⎧⎪⎨⎪⎩
+{0} ifEA is supersingular
+Z/pnZ ifEA is ordinary
+for alln ∈N. Isogeny-based cryptography almost exclusively uses supersingular curves, since for
+supersingular curves we have considerable control over the group structure of the subgroup of
+k-rational points, as discussed in [88, Section 4] and [40, Section 3].
+An isogenyψ: EA →EB between elliptic curves is a non-constant rational map that is also a
+group homomorphism. The degree of an isogeny is simply its degree as a rational map. We say
+that an isogeny isk-rational if the coefficients of the polynomials in its coordinate maps can be
+taken to be ink.
+With these definitions, we can define theComputational supersingular isogeny prob-
+lem with torsion point information (SSI-T)problem: LetN, N′be coprime integers, and let
+ψ: EA →EB be an isogeny of degreeN.G i v e nN,N′,EA,EB,a n dψ(P),ψ(Q),w h e r e{P,Q}is a
+generating set forEA[N′], findψ.
+A recent series of works due to Castryck and Decru [39], Maino and Martindale [109], and
+Robert [136] demonstrates that the SSI-T problem can, in fact, be solved in polynomial time; this
+renders all exotic signatures built on SSI-T and related problems insecure. In particular, the two
+blind signatures we discuss in Section4.4 are not secure, though we briefly discuss them for his-
+torical reasons.
+Isogeny-based protocols based on theGroup Action Inversionproblem are immune to the
+Castryck-Decru, Maino-Martindale, and Robert attacks; we discuss that problem here. Given an
+ellipticcurve EA,itsendomorphismringEnd (EA)isthesetofallisogenies ψ: EA →EA,alongwith
+theconstantmap ψ0,whichsendseachpointof EA to∞;theringoperationsarepointwiseaddition
+and function composition. WhenEA is defined overGF(p), we define the subring Endp(EA) to be
+theringofall GF(p)-rationalendomorphismsof EA,againalongwith ψ0.When EA issupersingular
+and defined overGF(p), it is known that Endp(EA) is isomorphic to an orderOin an imaginary
+quadratic field; moreover, the ideal class group cl(O) of this order acts freely and transitively by
+complex multiplication on the setEℓℓ(O) of elliptic curvesE′, which have Endp(E′) /simequalO—for
+details on the definition of this action, see [40, Section 3].
+Theothermajorprobleminisogeny-basedcryptography—oftencalled groupactioninversion
+(GAIP)—is to invert complex multiplication: that is, givenEA,EB, which satisfy Endp(EA) /simequalO/simequal
+Endp(EB), to find an ideal class [a] ∈cl(O) such thatEB = [a] ∗EA. Some protocols consider a
+multi-target (MT)variant of the problem: givenEA1,EA2,..., EAn whose endomorphism rings
+are pairwise isomoprhic, find [a],k1,k2 such thatEAk2 = [a] ∗EAk1 . At present, these problems
+underlie all secure isogeny-based exotic signature protocols.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:8 M. Buser et al.
+2.4 Code-based Assumptions
+Code-based cryptographic schemes deploy anerror correction code (ECC)in their algorithm.
+The security analysis of code-based cryptosystems assumes that the attacker has no access to
+the algebraic structure of the underlying ECC. Therefore, correcting errors is only possible if one
+knows a parity check (generator) matrix. LetCdenote a linear code of lengthn and dimensionk.
+Letr = n −k be the codimension ofCand H a parity matrix of this code. A syndrome mapping
+relatively to the parity matrixH is defined as
+SH : {0,1}n →{0,1}r,y ↦→yHtr .
+Next, lets ∈{0,1}r denote a syndrome that defines a set of words of{0,1}n as follows:
+S−1
+H (s) = {y ∈{0,1}n|yHtr =s}.
+The security of code-based cryptosystems relies on decoding problems that either address the
+Hamming distance of a codewordx ∈C to a wordy or look for the minimal Hamming weight
+of an errore lying either in the cosety + Cor inS−1
+H (s). These problems are not in NP, because
+it is difficult to check whethere is really of minimal weight in the coset. Therefore, we focus on
+slightly different decoding problems, which were defined in [17]:
+ComputationalSyndromeDecoding. Givenan r×nmatrixH,aword s ∈{0,1}r,andapositive
+integerw >0, find a worde ∈S−1
+H (s) of Hamming weight at mostw.
+It is worth mentioning that the corresponding decision problem is NP-complete.
+Codeword Finding.Given a binaryr ×n matrixH and a positive integerw >0, find a non-zero
+word of Hamming weight at mostw inS−1
+H (0).
+Complete Decoding. Given a binaryr ×n matrix H and a words ∈{ 0,1}r, find a word of
+Hamming weight at mostd0(n,r) inS−1
+H (s).
+2.5 MQ-assumptions
+The first Multivariate Public-Key Cryptography (MPKC)as we know it today was intro-
+duced in 1988 by Matsumoto and Imai [112]. MPKC is based on the existence of trapdoor one-
+way functions, which is defined in the form of a multivariate quadratic polynomial map over
+a finite field. The public key of such a cryptosystem is given as a set of quadratic polynomials
+P= (p1(w1,..., wn),..., pm(w1,..., wn)).E a c ho ft h epis is defined as the following quadratic
+polynomial:
+pi(w1,..., wn) :=
+∑
+k
+Pkiwk +
+∑
+k
+Qkiw2
+k +
+∑
+k>ℓ
+Rkℓiwkwℓ,
+where all coefficients and variables are inFq.
+The hardness problem introduced in [112] that all multivariate public-key cryptographic
+schemes rely on is called the multivariate quadratic (MQ) problem, which is defined as
+follows:
+MQ Problem:Given multivariate quadratic polynomialspi(x),x = (x1,..., xn),w h e r ea l lc o e ffi -
+cients and variables are in the finite fieldFq, the MQ problem is to solve the systemp1(x) = ··· =
+pm(x) = 0.
+The Rainbow signature scheme [58] is one of the oldest and most well-studied multivariate
+signatureschemesthatmadeittothethirdroundofNISTPost-QuantumCryptographystandard-
+ization process. A recent work by Beullens [18] showed how to practically break Rainbow. As a
+result, the multivariate blind signatures and ring signatures we discuss in Sections4.2and4.4are
+not secure anymore, because they fall short of guaranteeing the required post-quantum security
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:9
+Fig. 1. Roadmap of studied exotic signature schemes.
+due to the underlying insecure Rainbow signature scheme. However, we give a brief description
+of these schemes for historical reasons.
+3 OVERVIEW: EXOTIC SIGNATURES FOR BLOCKCHAIN
+This section presents a brief overview on the need of signature schemes with special features
+in blockchain, which establishes the necessary background to understand the roles of advanced
+cryptographic signatures in blockchain and introduces the roadmap (see Figure1).
+3.1 Account Management: Multi- and Aggregate Signature
+Amultisignatureisadigitalsignatureschemethatallowsagroupofuserstojointlysignamessage.
+The identities of all signers of a multisignature are transparent and verifiable. It is usually desired
+to have a single signature representing the collection of distinct signatures on the same message,
+as this reduces both the size of the jointly signed message and the time to verify its validity. Such
+multisignature schemes, where distinct signatures on the same message can be aggregated, are
+calledaggregatesignature.Givenamultisignature,theidentitiesofgroupmemberswhoproduced
+it are known to the verifier.
+This concept is particularly useful for ownership management in the blockchain, such as main-
+tainingajointaccountwheretheauthorizationfrommultipleusersisrequiredtovalidateatrans-
+action, increasing wallet security where compromising a single signing key does not lead to the
+compromise of the wallet [5].
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:10 M. Buser et al.
+3.2 Consensus Efficiency: Threshold Signature
+(t,n)-Thresholdsignaturesenableapre-definedminimumnumber t ofsignerstogenerateavalid
+signatureonbehalfofagroupofsize n.Theidentityofallinvolvedsignersishidden.Thisprimitive
+enables better efficiency for theByzantine Fault-Tolerant (BFT)-style consensus.
+In particular, miners in blockchain systems reach an agreement on the validity and ordering of
+transactions through a consensus mechanism [121]. In addition to the permissionless blockchain
+consensusalgorithms(suchasproof-of-workandproof-of-stake),BFT-styleconsensusalgorithms
+are also a popularchoice [36,48,158]as theyprovide instant finality andbetter throughput[150].
+However,BFTprotocolsrequireparticipants(akareplicas)tocollectandverifyapre-definedmin-
+imum number of signed votes from distinct replicas [111]. In most of the BFT protocols, at least
+one replica needs to forward the collected distinct signatures to others, where this can be made
+more efficient by leveraging a threshold signature.
+3.3 Empowering Scriptless Blockchain: Adaptor Signature
+Adaptor signature schemes allow a party to pre-sign a message in a way that anyone can turn it
+into a valid signature if a secret witness of the pre-signed message is known. This has been used
+to empower scriptless blockchains with offchain payments and atomic swaps.
+Layer 2 solutions support offchain payments, where a payer and a payee can process payment
+withouttheneedtorecordtheirtransactionsonline[ 79].Withoffchainpaymentsolutions,suchas
+paymentchannelorstatechannel,thechannelstateisupdatedthroughnewoffchaintransactions
+andamechanismforstaterevocationisrequiredtoavoidstateduplication.Whilestaterevocation
+canbeachievedthroughblockchainscripts,itischallengingforscriptlessblockchains.Theuseof
+adaptor signatures [63] has been explored to enable state revocation with scriptless blockchains
+[7, 117].
+Atomic swap protocols [81] enable parties to exchange assets across different blockchains.
+Atomic swap protocols require assets to be locked before the exchange is successful. However,
+similar to the payment channel network, such locking normally requires the support of a script
+language. The use of an adaptor signature enables atomic swap protocols to be executed over
+scriptless blockchains [132].
+3.4 Privacy: Blind Signature and Ring Signature
+As blockchains provide a transparent archive of all transactions, privacy is also a main concern.
+Blind signatures [42] are proposed for protecting the transaction privacy in the digital cash appli-
+cationbeforethebirthoftheblockchain,andalsointheblockchain-basedcryptocurrencies[ 153].
+With a blind signature scheme, the message is blinded before it is signed. The resulting blind sig-
+nature can be verified by anyone who has knowledge of the original unblinded message.
+A Linkable Ring Signature (LRS)[100] is a more popular primitive for protecting user pri-
+vacy in cryptocurrencies [122, 149]. An LRS enables a signer to hide herself among a group of
+entities, with an additional constraint that if the signer creates two distinct signatures by us-
+ing the same key, then the identity of the signer will be revealed. This primitive is leveraged
+in cryptocurrencies to protect transaction untraceability, which guarantees that it is impossible
+to trace any coin back to another transaction. Monero, which improves upon the CryptoNote-
+style blockchains [149], is a notable example built upon the LRS primitive. It deploys theRing
+Confidential Transactions (RingCT)protocol, where the LRS is used for protecting untrace-
+ability and an additional commitment scheme with range proof is used for hiding the transaction
+amount[122].However,priorresearchshowsthatevenwhenassumingasecureRingCTprotocol,
+thetransactionuntraceabilitystillcannotbeachievedwhenconsideringsidechannelinformation
+and user behaviors [37,43,93,119,157,159].
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:11
+4 POST-QUANTUM SCHEMES FOR BLOCKCHAIN
+This section provides an analysis of the recent and advanced post-quantum cryptographic prim-
+itives, with a focus on zero-knowledge proofs and special flavors of digital signatures we callex-
+otic signatures. Figure1 provides a roadmap of the primitives we present in this article and their
+connection. Our main focus is on the exotic signature schemes such as adaptor, blind, multi-/
+aggregate, threshold, and ring signatures. We analyze the post-quantum constructions of the
+above-mentioned signatures and emphasize the challenges and drawbacks in the existing lattice-,
+isogeny-,hash-,andcode-basedandmultivariateschemes.Itisworthmentioningthatseveralsig-
+nature schemes can be constructed from zero-knowledge protocols. Therefore, there is a direct
+connection between the zero-knowledge proofs and exotic signatures, as we can see in Figure1.
+Lastly,wepresentthepost-quantumconstructionsofringconfidentialtransactions(RingCT)that
+can be constructed from ring signatures. This fact establishes a connection between the exotic
+signaturesandRingCTshowninFigure 1.Theanalysisoftheseexoticprimitivesmakesourwork
+distinct from the previous results [68] as their focus is mainly placed on encryption schemes and
+conventional signature schemes.
+Important Zero-knowledge Paradigms Underlying Efficient Exotic Signatures
+Zero-knowledge Proofs (ZKPs), initially introduced by Goldwasser et al. [78], describe a para-
+doxical nature of NP proof systems where a prover convinces a verifier about some statement
+without revealing anything else apart from the claim that the statement is correct. Being such
+a powerful tool, it is no surprise that ZKPs can be used to construct various signature schemes.
+Therefore, we next discuss the general ZKP paradigms used as a building block for post-quantum
+signature-like schemes we discuss in this work.
+Lattice-based approach.There is a very rich literature in designing lattice-based ZKPs. Those
+relevantfor practical applications(suchasblockchainprotocols)mainlyfollowthe “Fiat-Shamir
+with Aborts” (FSwA)paradigm [102, 103]. This approach is an adaptation of the Schnorr proof
+system[140]tothelatticesettingwithanadditionalrejectionsamplingtechnique.Inparticular,the
+overallproofoftenfollows(oratleastincludes)thethree-movecommit-challenge-responsestruc-
+ture, where (1) in thecommit phase, the prover commits to some masking value(s) and transfers
+thecommitment(s)totheverifier;(2)inthe challengephase,theverifiersendsarandomchallenge
+(sampled from a certain distribution) to the prover; and (3) in theresponse phase, the prover re-
+veals the masked openings that are used to validate the proof. Many signature-like lattice-based
+schemes follow (in part) the above paradigm but adjust it to the specific requirements of the con-
+crete construction.
+Hash-based approach.Symmetric-based ZKPs use a one-way functionF : {0,1}n →{0,1}n like
+block ciphers or hash functions, which can be represented as a binary or arythemtic circuit. They
+prove the knowledge of a secret inputx with the help of the public outputy (F(x) = y). There
+existdifferentapproachestoprovetheknowledgeoftheinput x.OneapproachintroducedbyIshai
+et al.[85]iscalledMPC-in-the-head,whichconsistsofsimulatingamulti-partycomputationofthe
+functionF betweenanumberofpartiestoprovetheknowledgeof x.IntheworkofZKBoo[ 76]and
+ZKB++[41],bothschemescompute F witha multi-partycomputation(MPC) protocolbetween
+threepartiesandthenrevealtheviewsofonlytwoofthemintheproof.Katzet al.introducedthe
+ZKP system KKW [92], which improves ZKB++ when it comes to proof size. KWW increases the
+number of parties for the MPC-in-the-head parts, which results in a decrease of the proof size.
+The proof contains the view of all parties except one. ZBK++ and KKW are at the heart of the
+security of the digital signature Picnic [41] submitted to the NIST standardization process. An
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:12 M. Buser et al.
+optimized version of KKW is presented in [91]. The proof size depends directly on the number of
+multiplications (“AND” gates) in the circuitF; therefore, ZKB++ and KKW use the non-standard
+b l o c kc i p h e rL o w M C[2], which has a low multiplicative complexity. The works [54] and [12]u s e
+(MPC-in-the-head)butemploythestandardAESasaone-wayfunction F.Low-degreetesting[ 14]
+is an alternative to MPC-in-the-head to construct symmetric-based ZKPs and is implemented in
+ZKPs such as Ligero++ [22], ZK-STARK [13], and Aurora [14]. The results presented in [22]a n d
+[14] show that this latter technique could be more promising than MPC-in-the-head.
+Isogeny-based approach.Isogeny-based ZKPs can be broadly divided into two classes: those
+which that knowledge of a solution to an SSI-T instance and those that prove knowledge of a
+solution to a GAIP or MT-GAIP instance. These protocols are described in detail in [88] (in the
+SIDH-like setting) and [20] (in the CSIDH-like setting). The underlying hard problem of finding
+such an isogeny is called thesupersingular isogeny problem(SSI).
+The primary application of these isogeny-based ZKPs—especially in the blockchain-relevant
+context—is to construct isogeny-based digital signatures by applying the Fiat-Shamir trans-
+form [69] or the Unruh transform [146], such as Yoo et al.’s scheme [156], SeaSign [52], and
+CSI-FiSh [20]. Extensions of these simple ZKP protocols are used to develop the special flavors
+presented in Section4.
+Code-based approach. The first code-based ZKP construction was proposed by Stern [144],
+which was based on thesyndrome decoding (SD)problem. It was shown how to use this ZKP
+as a basis for the zero-knowledge identification scheme. In a subsequent work [87], the authors
+proposed a ZKP based on theExact Learning Parity with Noise (xLPN)problem, which is a
+special case of the LPN problem. We note that their ZKP construction represents a special case of
+a Sigma protocol where the soundness error is larger than 1/2. The total complexity of the pro-
+tocol in [87]i sΘ(∑ Ciℓlogℓ),w h e r eCi are the layers of the used circuitC and ℓis the length of
+the underlying LPN problem. A special case of code-based ZKPs was introduced in [35], which
+provides a zero-knowledge protocol for the correct evaluation of a code-basedpseudorandom
+function(PRF).Suchproofsystemallowstheprovertoconvincetheverifierthatagivenoutput
+y is correctly computed by a code-based PRF using a secret keyk and an inputx. The communi-
+cation complexity of this ZKP depends on the input dimensiont of code-based PRF. Fort = 128
+andt = 256thecommunicationcomplexityrangesbetweenapproximately700MBand1 ,500MB,
+respectively, which justifies the use of this ZKP only in prove-on-demand application scenarios.
+Multivariateapproach. Thefirstzero-knowledgeprotocolbasedonmultivariatequadraticpoly-
+nomialswasproposedin[ 139].Theconstructionfollowsthecut-and-chooseapproach,wherethe
+secrettheproverwantstoproveissplitintosharesandaftertheverifier’schoicetheproverproves
+the correctness of some of the shares. Mathematical properties such as modular exponentiation
+д ↦→дx mod p and a linear functionx ↦→Mx are used in this approach. For instance, when shar-
+ing a secrets = s1 +s2, the map of this secret can be written asдs = дs1дs2 and Ms = Ms1 +Ms2.
+However, these properties are not given in the MQ function(x1,..., xn) ↦→(y1,..., yn),w h e r e
+yk = ∑
+i,j ak,i,jxixj +∑
+i bk,ixi.Thiscanbefixedbyusingthebilinearitypropertyofthepolarform
+oftheMQfunction.Thesecurityoftheconstructionreliesontheconjecturedintractabilityofthe
+MQ problem assuming the existence of a non-interactive commitment scheme that is statistically
+hiding and computationally binding.
+4.1 Account Management: Multi- and Aggregate Signature
+Theconstructofmulti-signaturewasfirstarticulatedbyItakuraandNakamura[ 86],whereacoali-
+tion of signers generate a signatureσ together over a messagem. Given the set of public keys of
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:13
+all signers and the messagem, σ can be verified publicly. A straightforward approach is to gen-
+erate a signature overm per each individual signer and then concatenate all of them. This trivial
+approach is not practical as the size of the multi-signature grows linearly with the number of
+signers. Thus, ideally the size of the signature in a multi-signature protocol should be similar
+to a single-signer scheme. In Bitcoin, some transactions’ outputs require multiple signatures to
+be spent. These transactions are often calledm-of-n multisignature transactions where the triv-
+ial approach of building a multi-signature scheme as mentioned above is used. Currently Bitcoin
+implementation uses ECDSA signatures [152] to authenticate transactions. However, ECDSA is
+complex to be used in multiparty fashion [74, 99], and hence multisignature schemes supporting
+key aggregation [113] as well as efficient threshold signature protocols for ECDSA [74, 99]h a v e
+beenproposedtoaddressthisissue.Ingeneral,amultisignatureschemewithkeyaggregationdif-
+fersfromtheoriginaldigitalsignatureschemebyaninteractivesigningprotocolandanadditional
+algorithm KAgg that aggregates the public key of the signers into a single public key. At the end
+of theSign protocol the output is a single signatureσ on a messagem. Similar functionality as
+in multisignatures can be achieved by an aggregate signature scheme that was introduced in [28].
+However,themaindifferencetothemultisignatureisgivenbyanon-interactivesigningalgorithm
+that is run by each of then signers Si individually on a different messagemi, and all individual
+signaturesσi arepublicly aggregatedintoσ.
+Lattice-basedapproach. ElBansarkhaniandSturm [ 62] constructa lattice-basedmultisignature
+derived from the GLP signature [80], a variant of the Lyubashevsky-Schnorr Fiat-Shamir with
+rejectionsamplingsignature[ 103]basedontheP-LWE(akaRing-LWE)andRing-SISlatticeprob-
+lems (we note, though, that recent work pointed out that this protocol’s security proof has a gap,
+which implies its provable security relies on a non-standard variant of the Ring-LWE problem).
+The scheme has a three-round multi-signing protocol, in which the commitments and responses
+ofeachsignerintheprotocolarecompressedbysummation,exploitingthehomomorphicproperty
+of the P-LWE and P-SIS problem for verification. Each ofN cosigners may reject their responses
+in the rejection sampling step, which leads to re-starting the full protocol for all signers—this re-
+quires the rejection probability of each signer to beN times smaller than in the one-signer GLP
+signature, for the same overall signing acceptance probability. The signature length isO(logN)
+asymptotically for largeN, while for smallerN there is a linear component inN that grows by
+2λ bits per signer for security parameterλ-bit. Concrete signature lengths in [62]a r e4.7K Bf o r
+N = 5 and 4.9K Bf o rN = 10 at 120-bit security level (compared to 1.1K Bf o rt h eN = 1G L P
+signature at 100-bit security level [80]). However, there is no compression mechanism for the co-
+signer public keys. Recent work [51] pointed out a gap in the security proof of the multisignature
+in [62], which implies that its provable securityrelies on a non-standardvariant of the Ring-LWE
+problem.Thepaper[ 51]alsogivestwomodifiedmultisignatureschemesthatfixthisproblemand
+have a security proof from standard MLWE/MSIS assumptions at the cost of lower efficiency and
+longersignaturelength:athree-roundsigningprotocolthataddsanadditionalrandomizedhomo-
+morphic commitment computation in signing and verification, and a two-round signing protocol
+thatalsoembedsatrapdoorinthehomomorphiccommitmentscheme.Thepaper[ 71]givesavari-
+ant of the scheme [62] with a security proof in the quantum random oracle model and additional
+parameter constraints, but similarly to [62], its security proof also relies on an (explicitly stated)
+non-standard "rejected MLWE" assumption. Finally, the paper [108] gives a variant of [62]w i t ha
+lower signing rejection probability and shorter signatures, but, as pointed out in [51], its security
+proof also appears to require (an even stronger) non-standard "rejected MLWE" assumption.
+Doroz et al. [59] construct aggregate signature schemes MMSAT and MMSATK derived from
+the one-signer PASS signature [84]. Security is based on a more structured variant of the
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:14 M. Buser et al.
+PLWE/RingLWE and Ring-SIS problems introduced in [84] called the Partial Fourier Recovery
+Problem (aka Vandermonde-LWE and Vandermonde-SIS). In this problem the random matrix un-
+derlying the LWE/SIS problems is replaced by a partial Vandermonde (aka partial NTT) trans-
+form matrix over the underlying polynomial ring. The schemes assume a non-interactive signing
+protocol where each ofN cosigners signs independently using the PASS scheme. In MMSAT,N
+signatures are aggregated using a short linear combination of responses from the original PASS
+Fiat-Shamir signatures, with short linear combination coefficients determined by a hashing pro-
+cess. The aggregate signature length is further reduced using a linear mapT to compress the
+commitments, resulting in an overallO(logN) +2λN. The MMSATK scheme additionally allows
+aggregation of theN signer public keys by compressing each key using a linear map; the re-
+sulting aggregated key length is still linear inN but with a much smaller proportionality con-
+stant, reported as≈ 157 bytes per signer at a 128-bit security level (compared to 4.3K Bp e r
+signer for PASS). A concrete aggregated signature size of 36 bytes at 128-bit security level is
+reported in [59]. However, it was recently pointed out [31] that the compressing linear mapT
+used in MMSAT and MMSATK implies that the security of these aggregate signatures relies on
+the hardness of a problem we callT-Vandermonde-SIS, a variant of Vandermonde-SIS but with
+significantly reduced security against lattice attacks with the parameter choices in [59]. Conse-
+quently,onlythe"response"partofthesignaturecanbesecurelyaggregated,notthe"commitment"
+part. Due to a similar issue, the aggregatable signature from M-LWE and M-SIS problems con-
+structed in [31] also does not produce substantially shorter signatures than concatenated regular
+signatures.
+Multivariate approach.The firstsequential aggregate signature (SAS)schemebasedon mul-
+tivariate quadratic polynomials was proposed in [10]. The construction deploys multiple signers,
+whereeachofthemsignsadifferentmessageandallsignaturesaresequentiallyaggregatedintoa
+single signature, which benefits from a shorter size than a simple concatenation of the individual
+signatures.TheconstructionofanSASschemeisinstantiatedfromanHFEv-signatureschemein-
+troducedin[ 124],wheretheresultingSASlengthonlyslightlyextendsthesignaturelengthofthe
+standard HFEv- [125]. This construction enables high compression rates and therefore achieves
+very short sizes of the signature. For instance, in presence of 20 signers and an 80-bit security
+level,thesignaturesizeisabout254bits.Itisremarkablethatthecompressionlengthfora120-bit
+security level is even higher than in the 80-bit scenario. However, the main disadvantage in the
+case of a 120-bit security level is the considerably larger size of the public keys. The security of
+SAS is based on the hardness of the MQ problem, which for a given set of multivariate quadratic
+polynomials requires to find a vector⃗x such that all polynomials evaluate to zero in this vector
+⃗x. In terms of the signature size, multivariate SAS construction in [10] proves to be more suitable
+than other SAS constructions from lattice-based cryptography.
+Discussion. Currently there are no known hash-based, isogeny-based, or code-based construc-
+tions of multisignatures or aggregate signatures.
+Among the lattice-based multisignature constructions, the scheme of [62] gives short signa-
+tures but relies on non-standard variants of lattice problems. For more security confidence, we
+would recommend the scheme of [51], which relies on standard polynomial (ring) SIS and LWE
+lattice problems; the multisignature length scales logarithmically with the number of signers sim-
+ilar to [62], although its concrete signature lengths are not evaluated. Both those lattice multisig-
+nature schemes do not support key aggregation. It is an open problem to construct lattice-based
+aggregate signatures (i.e., supporting public aggregation) that are substantially shorter than con-
+catenated regular signatures and support key aggregation. The multivariate construction of [10]
+isbasedonaknownHFEv-variantoftheMQproblemandgivestheshortestaggregatesignatures
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:15
+onlyslightlylongerthanstandardHFEv-signaturesbutrequiressequentialaggregation,doesnot
+support key aggregation, and has quite large public keys. See Table1 for a summary.
+Themainapplicationofmulti-andaggregatesignaturesinblockchainsisuseraccountmanage-
+ment, where authorizing payments requires multiple users to sign on the same message in their
+individual apps (such as mobile wallet). Given the use case, the current best length (in the order
+of bytes) and computation time (a few milliseconds or even less) are considered acceptable in the
+deployment.
+4.2 Consensus Efficiency: Threshold Signature
+Ak-out-of-N thresholdsignaturescheme—firstintroducedbyDesmedtandFrankel[ 57]—isavari-
+ant of a digital signature scheme in which signing authority is split amongN users in such a way
+that anyk of them can construct signatures, while any group ofk −1 of fewer users cannot. The
+idea is built upon earlier works of Blakley [24] and Shamir [141], which introduced(threshold) se-
+cretsharingschemes :schemesinwhichasecretcanbesplitamong N usersinsuchawaythatany
+k ofthemcanrecoverthatsecretwhileany k−1orfewerofthemhavenoinformationwhatsoever
+about the secret (in the sense that those shares could correspond to any possible value of the se-
+cret). The correctness and security definitions for threshold signatures are mostly the same as for
+ordinary digital signature schemes; the main difference is that in the definition of unforgeability,
+we require that nok −1 or fewer colluding malicious users can produce a signature on a message
+they have not seen signed before—see [75] for the complete details.
+Lattice-based approach.Cozzo and Smart [46] investigated threshold variants of the NIST PQC
+signature schemes, constructed using a combination of secure MPC techniques with linear secret
+sharingtoallowthesignerstojointlycomputeasharingofthesignature.However,fortheFalcon,
+Dilithium, and qTesla lattice-based signature schemes, this results in signing protocols involving
+multiple rounds of communication with relatively slow signing runtimes. An earlier theoretical
+approachin[ 16]givesthresholdsigningprotocolsforGPV-typetrapdoorlattice-basedsignatures
+but relies on inefficient generic MPC techniques for offline and key generation Gaussian sam-
+pling.AnothertheoreticalapproachbyBonehet al.[ 27]introducedthresholdsignaturesbuiltfrom
+thresholdFully Homomorphic Encryption (FHE)techniques. In this approach, the public key
+contains an FHE encryption of the signing key, and the FHE decryption key is shared among the
+signers; the signing protocol involves each signer performing a homomorphic evaluation of the
+signing circuit followed by a partial decryption with its share of the FHE decryption key. When
+instantiated with lattice-based signatures and FHE schemes, a major efficiency bottleneck in [27]
+arisesfromtheneedto"smudge"thepartialdecryptionswithnoisemagnitudeexponentiallylarge
+in the security parameterλ, which leads to long partial signatures of length˜O(λ3).
+Isogeny-based approach.De Feo and Meyer [53] constructed the first isogeny-based threshold
+signaturein2019.Likemanyotherisogeny-basedsignatureschemes,thisschemeisbasedonCSI-
+FiSh[20].Thekeyideasoftheschemearethatthestructureofahardhomogeneousspace[ 45]with
+cyclicgroupactionallowsto(1)constructastraightforwarddistributedgroupactioncomputation
+protocol,(2)applytheZKPconstructionasin[ 20,Section5],and(3)useHarn’s“secretsharingin
+theexponents”construction[ 82]tosplittheproofofknowledgeauthorityina k-out-of-N fashion.
+Applying the Fiat-Shamir transform to the resultingk-out-of-N threshold proof of knowledge
+protocol yields the desired threshold signature. Despite being based on robust and versatile clas-
+sical primitives, the lack of ring structure in the exponent stands in the way of realizing certain
+desirable properties, such as the ability to detect malicious participants (as in [75], for instance);
+theabilitytodoawaywiththetrusteddealer,asin[ 126];ortheabilitytouseacentral“combiner”
+to construct a signature, rather than requiring parties to operate sequentially online. As well, the
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:16 M. Buser et al.
+schemeislimitedbytheabilityofparametergenerationsinceatpresent,thebest-knownalgorithm
+to generate parameter sets for CSI-FiSh-like protocols takes exponential classical time. However,
+parameter generation can be done efficiently on a quantum computer, making such schemes po-
+tentially useful in the “post-post-quantum” setting. Finally, to prove the security of their scheme,
+theauthorsuseatheoremofGennaroet al.[ 75],whichrequiresthattheirunderlyingthresholdse-
+cretsharingschemebasedonthehardnessofthe powerdecisionalDiffie-Hellmangroupaction
+problem(Power DDH)be simulatable.
+In 2020 Cozzo and Smart proposed Sashimi [47], an isogeny-based threshold signature scheme
+that achieves security against active adversaries. Like the protocol of De Feo and Meyer, this
+scheme also requires the structure of cl(O) to be known, and so can only presently be instanti-
+ated for the CSIDH-512 parameter set. The protocol essentially follows the first two steps of the
+protocolofDeFeoandMeyer,withaddedZKPsofthekinddescribedinSection 4toensurethatpar-
+ticipants are constructing the intermediate curves honestly; it is these ZKPs that give the scheme
+active security. Both schemes requireO(k) rounds of communication for thresholds of sizek.
+Multivariate approach.The most practical among the interactive threshold protocols designed
+by Cozzo and Smart [46] using general secure MPC techniques is a threshold signing protocol for
+the LUOV multivariate-based signature scheme [21] from the NIST PQC process. The interactive
+LUOVsigningprotocolof[ 46]forthreepartiesrunsinsixcommunicationroundsandisestimated
+in [46] to take about 1.3 seconds to generate a signature, assuming typical LAN communication
+latency, for a 231-bit quantum security level parameter set.
+Discussion. Wenotethattherearenocode-basedconstructionsofstandardthresholdsignatures.
+A lattice-based threshold signature by Boneh et al. [27] is less efficient due to large smudging
+errors.
+Recently, two isogeny-based threshold signature schemes were proposed: De Feo-Meyer and
+Sashimi. They have similar design of making CSI-FiSh into a threshold scheme. In both, the sig-
+nature is produced more toward a ring signature fashion, with each signer required to accept and
+receive a message. The main simplification in Sashimi is that a Replicated Secret Sharing Scheme
+isused.Thatis,theresultingsharing(foragivenqualifiedset)istreatedasafullthresholdsharing.
+The MQ-based LUOV threshold signing protocol [46] has potential practicality issues due to the
+interactive six-round signing process. For our recommendation, see Table1.
+Thresholdsignaturesarewidelyconsideredasagoodwaytoreducethenetworkoverhead(w.r.t.
+thenumberofbitstotransfer).Forexample,aleaderinaconsensusscheme(suchasHotstuff[ 155]
+and Damysus [55]) would need to collect and broadcast a quorum of votes/signatures, where the
+number of bits to transfer has complexity ofO(N) complexity. However, the deployment barrier
+for using threshold signatures is mainly the time it takes to generate a signature (which includes
+steps to generate and disseminate signature shares to reconstruct a full signature).
+4.3 Empowering Scriptless Blockchain: Adaptor Signature
+Adaptor signatures are a relatively new concept introduced initially as scriptless scripts by
+Poelstra [133]. They extend a digital signature such that first a “pre-signature” based on some
+conditionisgenerated.Then,whoeverisinpossessionofawitnessfortheconditioncanadaptthe
+pre-signature to create a full signature. Upon completion of the full signature, a secret value (in
+particular,awitnesstothecondition)isrevealed.Theconditionsaredefinedbyahardrelationon
+a publicstatement and a secretwitness such as the knowledge of a discrete log secret or a preim-
+age of a hash function. The complete signature is simply an ordinary signature output that can
+beverifiedastheoriginalsignaturescheme.Asaresult,anordinarysignatureiscreatedattheend
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:17
+Table 1. Summary of State-of-the-art Post-quantum Exotic Signature Schemes
+Type Scheme PQ Security Quantum Sign./Ver. (ms) Signature Asymptotic
+Type Assumption 4 Security Time at 3GHz Length (KB) Complexity
+Multi- and
+Aggregate
+Signatures5
+[62] Lattice R-SIS & R-LWE 6 120 bits 0.84/0.15 0.49 ( N = 10) O(logN)
+[51] Lattice M-SIS & M-LWE 128 bits N/E N/E O(logN)
+MMSAT [59] Lattice T-Vand.-SIS ⊘& -LWE 128 bits N/E 0.036 ( N = 103) O(N)
+MQSAS [10] MQ HFEv- MQ 120 bits 4.18/N/E 0.004 ( N = 10) O(N)
+Threshold
+Signatures7
+Falcon MPC [46] Lattice NTRU & R-SIS 108 bits >5,700/0.03 0.67 O(1)
+De Feo-Meyer [53] Isogeny Power DDH 60 bits 722/722 0.560 O(1)
+Sashimi [47] Isogeny Power DDH 60 bits 5 .66×105/280 1.77 O(k)
+LUOV MPC [46] MQ LUOV MQ 231 bits 1,300 8/22 3.1 O(1)
+Adaptor
+Signatures
+LAS [63] Lattice M-SIS & M-LWE 128 bits 0.22/0.08 9 1.5810 N/A11
+O-IAS [145] Isogeny GAIP 60 bits 86.7/93.3 19.0 (Pre-sig.) N/A
+0.956 (Sig.)
+Blind
+Signatures
+[83] Lattice R-SIS 128 bits N/E 12 7730 N/A
+UBSS [107] Isogeny DSSP ⊘& 1MSSCDH⊘ N/E13 N/E N/E N/A
+DVBS[ 138] Isogeny Decisional SSI-T ⊘ 128 bits N/E ≈1.75 N/A
+CFS [25] Code Decisional SD 82 bits N/E 3100 N/A
+RankSign [25] Code Decisional SD 100 bits N/E 200 N/A
+[131] MQ Rainbow ⊘ 128 bits 19/5,505 28.5 N/A
+Ring
+Signatures14
+DualRing-LB [160] Lattice M-SIS & M-LWE 128 bits 3/1 15 516 O(N)
+MatRing [64,66,67] Lattice M-SIS & M-LWE 128 bits 10/3 11 O(log1.7 N)
+SMILE [105] Lattice M-SIS & M-LWE 128 bits N/E 16 O(logN)
+Calamari [19] Isogeny Decisional CSIDH 60 bits ≈106 7 O(logN)
+[92] Hash MPC-in-the-head 128 bits 2,000/2,000 17 17818 O(logN)
+[56] Hash MPC-in-the-head 128 bits N/E 2,125 O(logN)
+[161] Code SD 63.3 bits N/E 0.208 (N = 10) N/A
+[50]19 Code GD/GPBD 80 bits N/E 0.587 N/A(N = 10,ℓ= 9)20
+[33]21 Code GSD 128 bits N/E 397 (N = 10)22 N/A
+Ringrainbow [118]23 MQ Rainbow ⊘ 128 bits N/E 0.83 (N = 10) N/A
+[130]24 MQ MQ-Problem 80 bits N/E 324 (N = 10) N/A
+4Thosemarkedwith ⊘indicatetheassumptionsthathaverecentlybeenbroken(asymptoticallyorpractically).Thisrenders
+the corresponding schemes insecure, which is indicated by striking through the scheme’s name or citation.
+5The aggregate signature lengths are per signer at the indicated numberN of signers.
+6Duetoagapinthesecurityproofof[ 62]pointedoutin[ 51],provablesecurityreliesonanon-standardvariantofMLWE.
+7Metrics are reported for thresholds of size 2 unless otherwise indicated. Asympt. complexity reported is a function of the
+thresholdk.
+8Thisestimateisforasix-roundinteractivesecurecomputationthree-partysigningprotocol( k = 3)basedontypicalLAN
+latency.
+9We estimate the runtimes ofLAS as 2×of those of Dilithium [61].
+10This is an estimate size under Bai-Galbraith [9] and Dilithium [61] compression techniques. Also note that Dilithium
+parameters are more conservative and at a higher security level than those ofLAS.
+11"N/A" means "not applicable."
+12"N/E" means "not evaluated by the authors" and we are unable to estimate.
+13The 1MSSCDH assumption is broken in [115]. However, a flaw in the security proof of [107] means that the break does
+not necessarily imply a polynomial-time attack on UBSS. Its security level is currently unknown.
+14Metrics are reported for rings of sizeN = 32 unless otherwise stated.
+15WeestimatetheruntimesofDualRing-LBasone-thirdsofthoseof MatRing.[160]claimsDualRing-LBis5 ×fasterthan
+MatRing.
+16ItmaybepossibletoreducethesignaturelengthofDualRing-LBusingBai-Galbraith[ 9]andDilithium[ 61]compression
+techniques.
+17This signing/verifying time has been given for a ring of sizeN = 128.
+18This signature size has been approximated thanks to the formula given in [92].
+19The scheme in [50]i sa threshold ring signature.
+20In [50] the signature size is given as 675N −228ℓ.
+21The scheme in [33]i salinkable ring signature.
+22In [33] the signature size is provided as 317800N.
+23Since in the first construction [151] the authors did not provide any efficiency analysis, we provide here the parameters
+for the later construction [118], which is alinkable ring signature scheme.
+24The scheme in [130]i sathreshold ring signature.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:18 M. Buser et al.
+of the two-party interaction in the adaptor signature. In particular for the blockchain application,
+the miners simply verify the ordinary signature without realizing it may be an adaptor signature
+output.Atthesametime,thetwopartiesinvolvedintheadaptorsignaturegenerationcanembed
+a condition that is not limited by the blockchain’s scripting language.
+There are mainly three advantages of adaptor signatures: (1) on-chain cost reduction, (2) im-
+proved fungibility of transactions, and (3) provision of extra capabilities beyond the blockchain’s
+scriptinglanguage.Morespecifically,asadaptorsignatureinteractionhappensoff-chainandthus
+theconditionisnotpublishedon-chainseparately,thereisnoadditionalon-chainstorageandver-
+ificationcosts.Thisfungibilitypropertyisused,forexample,toobscurepaymentchannelnetwork
+transactions among regular transactions [110]. Finally, adaptor signatures bring about enhanced
+functionalities to blockchains with a limited scripting language. These advantages have been uti-
+lized in various applications such as atomic swaps [132], payment channel networks [7,110], and
+discrete log contracts [60].
+As formalized in [7], an adaptor signature has four algorithms (AS.PreSign,AS.PreVerify,
+AS.Adapt,AS.Ext), where the first one is used to create a pre-signature using the signer’s secret
+key,themessage,andthepublicstatement,andthesecondisitspublicverificationalgorithm.We
+then haveAS.Adapt function, which completes a pre-signature to a full signature using a secret
+witness. Finally, theAS.Ext algorithm takes a pair of (signature, pre-signature) on the same state-
+mentandoutputsawitnessforthestatement.Asdefinedin[ 7],therearethreemainpropertiesof
+an adaptor signature: (1) unforgeability, (2) pre-signature adaptability, and (3) witness extractabil-
+ity. The unforgeability of an adaptor signature is very similar to that of an ordinary signature but
+gives the adversary access to a pre-signature on the target message. Even in this case, the adver-
+sary is expected to fail in forging an adaptor signature output. In pre-signature adaptability, we
+expect any user to be able to adapt a valid pre-signatureˆσ as long as the user knows a witness
+to the statement used to generate the pre-signatureˆσ. Finally, witness extractability informally
+requires that a valid witness can be extracted from any given valid pre-signature/signature pair.
+Lattice-based approach.The first post-quantum adaptor signature, namedLAS, was proposed
+byEsginet al.in[ 63].ThisbuildsontheDilithiumsignaturescheme[ 61],athird-roundsignature
+candidateinNIST’sPost-QuantumCryptographystandardizationprocess.BothDilithiumand LAS
+relyonthetwowell-knowncomputationallatticeproblems,namelyModule-SISandModule-LWE.
+The efficiency ofLAS is similar to that of Dilithium.
+In[63],theauthorsfirstextendtheformalmodelfortheadaptorsignaturetohandletheso-called
+“knowledge gap” in lattice-based ZKPs. In particular, the proposal in [63] only satisfiesweak pre-
+signatureadaptability,whichmeansthat extractedwitnessesarenotguaranteedtobesuccessfulin
+adaptingotherpre-signatures.Thislimitationleadstoamorecarefulanalysisoftheapplicationof
+LAS intheblockchainapplicationsettings.Nevertheless,theauthorsof[ 63]showhowtoovercome
+these challenges without incurring additional on-chain costs.
+Isogeny-basedapproach. Theonlypresentlyknownisogeny-basedadaptorsignatureis IAS (and
+its optimized variantO-IAS), proposed in 2020 by Tairi et al. [145]. The scheme, like many other
+isogeny-basedsignatureschemes,isadaptedfromCSI-FiSh,whichitselfisobtainedfromapplying
+the Fiat-Shamir transform [69] to an isogeny-based Schnorr-like identification protocol [140]a s
+discussedinSection 4.IncontrasttopriorSchnorr-basedadaptorsignatures[ 7],thelackofgroup
+structureon Eℓℓp(O)preventsastraightforwardconstructioninthissetting.Theauthorsovercome
+thisobstructionbyintroducingadditionalZKPstotheprotocolthatessentiallyallowparticipants
+toverifythatthesignerisbehavingcorrectlybyextendingtheprotocolin[ 20,Section5]toprove
+that certain tuples(E1,E′
+1,E2,E′
+2) satisfy∃[a] ∈cl(O) s.t.E′
+i = [a]∗Ei fori = 1,2.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:19
+Discussion. To the best of our knowledge,LAS and IAS are the only currently proposed post-
+quantum adaptor signatures, and their differences are emblematic of the differences between
+lattice-based and isogeny-based protocols in general. At similar security levels one expectsLAS
+to have much faster signing and verification times, but larger signatures and pre-signatures—for
+concrete values for specific parameter sets, see Table1. With the application of well-known com-
+pressiontechniquesinthelatticesettingto LAS,thegapinsignaturesizegetssmaller,thoughthey
+remain larger than inIAS. The security ofLAS is based on the very well-known and extensively
+studied M-SIS and M-LWE problems, and so we are relatively confident in its claimed security
+level. ForIAS, security is based on GAIP for the specific case of cl(O) acting onEℓℓp(O); the dif-
+ficulty of this problem for specific CSIDH primesp is still being studied, though it is generally
+agreed that CSIDH-512 does not offer the 128 bits of quantum security required for NIST level 1;
+the current state-of-the-art estimates indicate that this parameter set offers only 60 bits of quan-
+tumsecurity[ 128].Thisproblemisexacerbatedbythedifficultyofcomputingthegroupstructure
+of cl(O), which is required for CSI-FiSh [20] and, consequently, for [145]. In light of these facts,
+werecommend LAS overIAS,unlesssignaturesizeisofutmostimportanceandtherelativelylow
+60-bit security level provided by CSIDH-512 is adequate for the application.
+Oneofthemainapplicationsofadaptorsignaturesisenablinglayer2protocols,suchaspayment
+channel, on scriptless blockchains. Given that payment channel parties (the payer and the payee)
+only need to interact with each other off-chain, given their frequency of payments, the current
+computingtimeisacceptable.However,thesizeofsignaturesthatarerecordedonthechainshould
+be as small as possible to reduce the size of transactions and blockchains. Given the fact thatLAS
+producessignaturesassmallasasimilarordinarylatticesignaturesuchasDilithium[ 61],wefind
+LAS to be an acceptable solution for post-quantum blockchain.
+4.4 Privacy: Blind Signature and Ring Signature
+4.4.1 Blind Signatures. Blind signatures—introduced by Chaum in 1983 for use in untraceable
+payment systems [42]—are a variant of digital signatures in which a messagem chosen by the
+signature requester can be signed by the signer who knows the secret key, without revealing the
+message to the signer. There are a number of formalisms that encode the intuition of a blind
+signaturescheme;wedescribetheformalismthatappearsin,forinstance,[ 3,Definition1].Inthis
+setting, KeyGen and Verify are as in a digital signature, whileSign is now aninteractive protocol
+betweenarequester(whoknows m)andthesigner(whoknows sk).Attheendofthe Sign protocol,
+the requester should have a signatureσ onm, while the signer should come away not knowing
+anything aboutm. Just as in an ordinary digital signature we have a notion of correctness and
+unforgeability, which are essentially unchanged, for a blind signature scheme we also require the
+blindnessproperty,whichshouldencodethesigner’slackofknowledgeof m;notably,wewantthis
+lack of knowledge to extend to cases when the signer is allowed to choose the secret key/public
+key pair, even when she knows that the message comes from a small collection of messages that
+she herself has chosen before the interaction.
+In[3],blindnessisformalizedbasedonanindistinguishabilitygame.Anadversary A(actingas
+asigner)choosesasecretkey/publickeypair (sk,pk) andtwomessages m0,m1,andtheninteracts
+withtworequesters:onewhorequestsasignatureon m0,andonewhorequestsasignatureon m1.
+Theseinteractionsoccurinarandomorder;oncetheinteractionsaredone, Amustguessinwhich
+order they interacted with the requesters. There are a few closely related “levels” of blindness,
+depending on the running time and success probabilityAcan be allowed to have; formally, we
+say that the scheme has:
+•Computationalblindness ifaPPTadversarycannotwintheblindnessgamewithprobability
+non-negligibly greater than1
+2
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:20 M. Buser et al.
+•Statistical blindnessif anAwhose running time is unbounded cannot win the blindness
+game with probability non-negligibly greater than1
+2
+•Perfect blindnessif anAwhose running time is unbounded cannot win the blindness game
+with probability different from1
+2.
+Blindsignaturesareusedtoprovideunlinkabilityandanonymityoftransactionsinblockchain.
+For instance, BlindCoin [148] uses blind signatures to hide the mapping between a user’s input
+and output addresses from the mix.
+Lattice-basedapproach. Thefirstlattice-basedblindsignaturewasconstructedbyRückert[ 137].
+The construction was based on the famous SIS-based Lyubashevsky’s identification scheme [102].
+Ononehand,theGaussianrejectionsampling[ 103]playsacentralroleinBLAZE[ 3]asitisused
+insteadofuniformdistributiontoachievesmallersizes.Ontheotherhand,BLAZEisnotone-more
+unforgeableandthisdeficiencyhasbeenaddressedinBLAZE+[ 4],whichreducesthecorrectness
+error (inherent in lattice constructions) by a novel approach that allows performing multiple in
+parallel rejection samplings. This hugely reduces the communication complexity.
+Otherlattice-basedblindsignatureswithotherfeaturesalsoappearedintheliteratureincluding
+[30,96,123].AlltheaboveschemesrelyonananalysisbyRückert[ 137]toarguethatacollisioncan
+be found with non-negligible probability when rewinding. However, such an analysis was found
+tobefaultyin[ 83],implyingalloftheaforementionedschemeshaveasubtleflawintheirsecurity
+proofs.Theauthorsof[ 83]thenproposedanewthree-roundlattice-basedblindsignaturescheme,
+whose security can be proved, in the random oracle model, from the standard SIS assumption.
+Their scheme is only blind in the weaker honest signer model [90] as compared to the malicious
+signer model [70].
+There has been another line of research on constructing lattice-based blind signatures based
+on preimage sampleable trapdoor functions [73, 98, 162]. All these schemes are also shown to be
+insecure by [4] as well.
+Isogeny-based approach.In contrast to all other isogeny-based protocols in this work, isogeny-
+basedblindsignaturesusethefullsupersingularisogenygraph,ratherthanthecomplexmultiplica-
+tiongraph.Therearetwoconstructions:thefirst,UBSS,givenin[ 107],buildsupontheundeniable
+signature scheme of [89] and unfortunately inherits a flaw in its security proof from [89], given
+in [115]. Because the security of this protocol is in question, we do not discuss it further here.
+The second construction, given in [138], improves upon the construction of [107]i nt w om a i n
+ways: (1) it is not vulnerable to the attack of [115], and (2) it is a designated verifier signature
+scheme, rather than an undeniable signature scheme. More intuitively, point (2) means that sig-
+nature verification in the protocol of [138] does not require an interactive protocol involving the
+signer,thoughsignaturesarestill non-transferable;thatis,theycanonlybeverifiedbyadesignated
+party(the designatedverifier ).Thisprotocolrequirespartiestocomputeisogeniesoffourcoprime
+degrees: one prime power degree for hashing messages, blinding/unblinding, signing, and verify-
+ing. Generally speaking, in SIDH-like protocols the size of the underlying prime field increases
+with the number of prime power isogenies required. In this protocol, achievingλ bits of security
+(bothforunforgeabilityandblindness)requiresaprimeofatleast7 λbits,whichisrelativelylarge
+( c o m p a r e dw i t hS I D H[88] and SIKE [8], which require primes of only 4λ bits to achieveλ bits of
+security).
+Code-based approach.The first and to the best of our knowledge the only code-based construc-
+tionofablindsignaturehasbeenproposedin[ 25].TheconstructionusesaconcatenationofStern-
+like ZKPs [144], which enables an authentication protocol for concatenated matrices. The blind
+signature is based on the Hamming metric and is obtained by applying the Fiat-Shamir heuristic
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:21
+totheauthenticationprotocol.Thesecurityoftheconstructionreliesonthesecurityofatrapdoor
+function for thecomputational syndrome decoding (CSD)problem and the soundness of the
+underlying ZKP, while for the Hamming metric this trapdoor function is given by the CFS signa-
+ture and for the Rank metric it is given by the RankSign protocol [72]. The authors provide the
+parameters for rank metric and for Hamming metric, which are practical for the first metric but
+lesspracticalforthelatterone.Intermsofthesignaturesize,theinstantiationwiththeHamming
+metric is outperformed by the instantiation for the rank metric by multiple times.
+Multivariate approach. The first multivariate construction has been proposed in [131]. The
+blind signature is obtained by a transformation of Rainbow, an MQ signature scheme and a post-
+quantum candidate to the NIST competition. The transformation is achieved by combining the
+MQ signature scheme with the MQ-based zero-knowledge identification protocol from [139]. In
+terms of security, the scheme achieves the usual blindness property and the universal one-more
+unforgeability. Regarding the efficiency, the most costly part for the user is the execution of the
+public key generation procedure of the Rainbow signature scheme.
+Discussion. Although the incorrect provable lattice-based blind signatures BLAZE [3]a n d
+BLAZE+ [4] and their parents [137] can offer practical key and signature sizes (in the order of
+only a few kilobytes or in some cases less than 1 KB), the only correct-proof lattice-based blind
+signatures[83]haveeithersignaturesizesontheorderofmegabytesorlargekeysduetohomomor-
+phic nature of the construction, respectively. Hence, an outstanding open problem is to construct
+a practical (in terms of key and signature sizes) and secure (in the malicious signer model) lattice-
+based blind signature from standard assumptions. The MQ-based scheme of [131] guarantees the
+usual blindness security property and the universal one-more unforgeability. Regarding the effi-
+ciency, the most costly part for the user is the execution of the public key generation procedure
+of the Rainbow signature scheme. Compared to the existing lattice-based construction [137], this
+MQ-based construction benefits from a shorter signature size on one side but on the other side it
+requiredlargerpublickeysthanin[ 137].For100bitsofsecurity,[ 131]givesshortersignaturesizes
+of17.6KBbutlarger pk sizeof54 .6KBcomparedto200KBand15KB,respectivelyfortheshortest
+code-basedblindsignatureRankSign[ 72].Ourfinalrecommendationistouse[ 131],whichenjoys
+reasonablekeyandsignaturesizesandisbasedonwell-understoodmultivariateassumptions.For
+further performance metrics and the effect of recent attacks on these blind signature proposals,
+see Table1.
+Given that a number of isogeny-based and multivariate blind signatures have been rendered
+insecureduetorecentattacksandthattheremainingonesarequiteinefficient,webelievethereis
+a lot of further progress to be done in the area of post-quantum blind signatures. Particularly for
+blockchainapplication,onewouldexpecttohavesignificantefficiencyimprovementsbeforethey
+can be acceptable for deployment.
+4.4.2 Ring Signatures. Ring signatures were first introduced in 2001 by Rivest et al. [135], ini-
+tiallytoallowauthoritativebutanonymoussecretleaking,buttheyhavefoundotherapplications
+to the blockchain. The rigorous formal definitions were established in [15].
+An ordinary ring signature scheme has much the same structure and security requirements as
+an ordinary digital signature. The main syntactic difference between the two is that, in a ring
+signature scheme, theSign andVerify functions take as input a collection of usersR, called aring.
+A signer can sign on behalf of any ring that includes her public key. Any third party can verify
+thatasignaturewasgeneratedbyaringmemberonbehalfofthering,buttheverificationprocess
+will not reveal any information about which ring member produced the signature.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:22 M. Buser et al.
+Correctnessofringsignaturesisanalogoustothatofordinarydigitalsignatures.Theirunforge-
+ability is more complicated,since theyare requiredto be unforgeable in the face ofinsider corrup-
+tion. Informally, we say that a ring signature isunforgeable with respect to insider corruptionif an
+efficient adversary cannot forge a signature on behalf of a ringR∗, even with access to a signing
+oracle of each user not inR∗.
+Ring signatures must satisfy the additional property ofanonymity (against full key exposure),
+which requires that an efficient adversaryAcannot tell which of two userspki0,pki1 in a ringR
+producedagivensignature σ onamessage monbehalfof R,evenif Aisgivenaccesstoeachuser’s
+secretkey,andevenif Aisallowedtochoose R,m,i0,and i1.Thissecuritydefinitionincludestwo
+intuitively important scenarios: (1)insider collusion:no collection of users can determine which
+ring member produced a given signature on behalf of the ring; (2)key exposure:if a user’s private
+key is revealed, signatures produced by that user cannot be deanonymized.
+Linkable ring signatures are a variant of ring signatures introduced in 2004 by Liu et al. [100].
+They enhance ring signatures by adding a new functionality—linking—which allows anybody to
+determine whether two signatures were produced by the same user, without revealing that user.
+This functionality is instantiated as a functionLink, which takes in two signatures and outputs a
+bitb indicating whether the signatures were produced by the same user.
+This new functionality introduces new correctness and security requirements, i.e.,linkage cor-
+rectness: if two signaturesσ0 and σ1 are generated by the same user, thenLink(σ0,σ1) = 1, and
+further three properties:
+•Linkability: Among anyN +1 signatures, each signed on behalf of rings that are subsets of
+a fixed ring ofN users, there must be a linking pair of signatures.
+•Linkable anonymity:Given two public keyspk0,pk1 whose corresponding private keys are
+sk0,sk1, resp., and two disjoint listsS0,S1 of ring signatures, which containpk0 and pk1,
+such that either all those signatures inS0 were constructed usingsk0 and all those inS1
+were constructed usings1, or vice versa, no efficient adversary can determine which is the
+case.
+•Non-frameability against insider collusion:No efficient adversary can produce a new valid
+signature that links to any honestly constructed signatureσ, even with access to the secret
+key of each user.
+In the literature, one often distinguishes (1) logarithmic ring signature, where the signature size
+scalespolylogarithmicallyintheringsize N,and(2)linearringsignature,wherethesignaturesize
+isO(N).
+Lattice-basedapproach. Untilrecently,lattice-basedringsignatureproposalswerefarfromprac-
+tical. Then, in 2019, Esgin et al. [65] introduced a substantially more efficient ring signature con-
+struction based on Module-SIS and Module-LWE problems and initiated the path toward practi-
+cally efficient lattice-based ring signatures. This construction also has the advantage of being of
+polylogarithmic size. The blueprint idea in [65] has been greatly improved upon in subsequent
+works[64,66,67],wherethesignaturesizewasreducedbyordersofmagnitudeincomparisonto
+the state of the art prior to [65]. The shortest proposal in this family is obtained by instantiating
+the ring signature in [64] using the techniques in [66, 67], which allow to set parameters signifi-
+cantly more efficiently. We call the state-of-the-art proposal resulting from this series of works as
+MatRing signature. This proposal also easily extends to thelinkable s e t t i n ga ss h o w ni n[66,67].
+Recently, Beullens et al. [19] and Lyubashevsky et al. [105] proposed new approaches to con-
+struct ring signatures with instantiations based on Module-SIS and Module-LWE problems. Over-
+all,allschemesin[ 19,64,65,67,105]scalepolylogarithmicallyinsignaturesize,butFalafl[ 19]and
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:23
+the proposal in [105] scale more efficiently inasymptotic signature size. The practical advantage
+ofthelattertwoproposals’concretesignaturesizes,however,isonlyobservedforlargeringsizes
+of about 1,000 (and even much larger ring sizes for Falafl). In Table1,w ec o n s i d e rMatRing and
+[105] as either one leads to the most practically efficient scheme for any ring size.
+There are also some efficient linear-size ring signature proposals: Raptor by Lu et al. [101]a n d
+DualRing-LB by Yuen et al. [160]. Despite being linear-sized, DualRing-LB signature sizes scale
+slowly thanks to its novel approach, which requires a single ZKP response andN challenges for
+a ring size ofN users. The advantage comes from the fact that the size of a challenge (at most 32
+bytes)issignificantlysmallerthanthesizeofaZKPresponse(afewkilobytes)inthelatticesetting.
+Fromthesecurityperspective,althoughRaptorreliesonastronger“NTRU-like”securityassump-
+tion, DualRing-LB is based on standard Module-SIS and Module-LWE assumptions. DualRing-LB
+produces very short signatures for small- to medium-size rings (see Table1).
+Some of the aforementioned works on constructing ring signatures also extend their proposals
+tobuildaRingCTprotocol(employedbyMonero),wheretheringsignatureisacoreingredient.A
+RingCT protocol[122] allows apayer/spender to transferassetsonblockchainto a payee/recipient
+whilepreservingprivacy,i.e.,whilehidingsensitiveinformationsuchaspayer/payeeidentitiesand
+transaction amount from third parties. The payer anonymity is achieved by the use of a linkable
+ring signature and further advanced ZKPs are employed to construct a full RingCT protocol. Due
+to their strong connection to ring signatures, we briefly mention these works below.
+The work of Esgin et al. [67] introduced the first practical post-quantum RingCT protocol,
+named MatRiCT. More recently, MatRiCT was significantly improved upon by Esgin et al. [66].
+The recent protocol, named MatRiCT+ [66], requires significantly less communication and com-
+putation and has the important feature that the proof length scales only logarithmically in the
+number of input accounts while MatRiCT (as well as other prior post-quantum proposals) scales
+linearlyinthat.ConcurrentlywithMatRiCT +,Lyubashevskyetal.[ 105]instantiatedtheMatRiCT
+frameworkusingdifferentapproachestorealizetheunderlyingproofs.ForthemostcommonMon-
+ero transactions (with two inputs/outputs and ring size ofN = 11), MatRiCT+ and the proposal
+in [105] require very similar communication, while MatRiCT+ scales much more efficiently to a
+larger number of inputs (which is the second most common setting in Monero).
+Hash-based approach.[92] has outlined how to build a ring signature from their proposed zero-
+knowledge protocol based on symmetric primitives (more details will be discussed in Section4).
+The idea is to based on the (normal) signature proposed in their paper. Key generation chooses a
+uniform secret keyk ∈{0,1}κ for some security parameterκ and the corresponding public key
+will bey = PRFk(0κ) for some pseudorandom functionPRF. Given a ringR = {yi}N
+i=1 of N public
+keys,let C bethecircuitthattakesasinputasecretkey k andoutputs1iff PRFk(0κ) =yi forsome
+i ∈[1,N].AringsignaturewillthenbeanNIZKPoKofaninput ki suchthat C(ki) = 1.Thesizeof
+the signature (i.e., the size of the circuitC in this case) is linear withN, the number of users inR.
+Inordertoshortenthesignaturesizetologarithmicin N,[92]furthersuggestedtouseaMerkle
+tree and put all the public keysyi as leaves (for simplicity, they assumeN = 2q for some integer
+q). The proof further takes an auxiliary valuepath that outputs 1 ifpath is a valid Merkle proof
+(with respect to root) for the valuey at leafi. A signature is an NIZKPoK of an input for whichC
+evaluates to 1. In this case, the size is only log(N).
+Isogeny-basedconstructions. Theonlyisogeny-based(linkable)ringsignaturetodateisCalamari
+[19].Atitscoreisasigmaprotocol Π,whichallowsaprovertoproveknowledgeofthesolutionto
+oneout ofN instancesE1 = [a1]∗E0,E2 = [a2]∗X0,..., EN = [aN]∗E0 of the GAIP with respect
+to the same baseE0, without revealing the indexj∗of the known solution. The signature scheme
+is constructed by applying the Fiat-Shamir transform [69].
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:24 M. Buser et al.
+To make this into a linkable ring signature, the authors propose to add a tagT = [ai]⋆T0 to
+eachsignature,where ⋆isanactionofthegroup G onsomeset T(differentfromand“compatible
+with,”inaprecisesense,theaction ∗),and T0 isafixedpublicvalue.Whensigning,thesignerthen
+producesaproofofknowledgeoftheelement[ a]suchthat[ a]∗E0 = Ej forsome j,andsuchthat
+[a]⋆T0 =T. SinceT0 is fixed, to test whether two signaturesσ1 = (ˆσ1,T1) andσ2 = (ˆσ2,T2) were
+generated by the same individual, it suffices to check thatT1 =T2.
+Beyond the basics of the scheme we describe here, Calamari makes a number of optimizations
+to reduce signature sizes. Calamari signatures are extremely small and scale logarithmically with
+ring size; for two-member rings signatures are 3.5 KB, and are 23 KB long for rings of size 221.
+However, signing is orders of magnitude slower than for the comparable lattice-based ring signa-
+ture Falafl, requiring from 1011 to more than 1013 cycles for signing, compared to Falafl’s 108 to
+1010 cycles (depending on ring size). As well, this relatively efficient version of Calamari can only
+be instantiated when the group structure of cl(O) is known explicitly; at present, this restricts us
+to the CSIDH-512 parameter set (or smaller), which offers only 60 bits of quantum security [128].
+Code-based approach.The first code-based ring signature has been proposed in [161]. In terms
+of security, the signature is secure under the syndrome decoding problem. The authors achieve a
+signaturesizeof144 +126N,wher eN isthenumberofringmembersforasecuritylevelofabout
+263.3.Aspecialflavorofringsignatures,a ℓ-out-of-N thresholdringsignature,hasbeenintroduced
+in [50]. It allows a set ofℓring members to sign a message without revealing the identities of the
+members, with a ring size ofN. The security of the scheme is given in the reductionist security
+model and the construction is secure under the hardness of theBounded Distance Decoding
+(BDD) problem andGoppa Code Distinguishing (GCD)problem. While the signature size is
+small,themaindrawbackofthisconstructionisthelargesizeofpublickeysandtheslowsigning
+procedure. The first code-based linkable ring signature has been proposed in [33]. It is achieved
+fromaStern-likeprotocol,whichistransformedintoaringsignaturebyapplyingtheFiat-Shamir
+transform. The signature size in [33]i s3 9N kBytes, whereN is the number of signers in the ring.
+Arecentconstructionofaringsignature [ 34]achievesalso theadditionalpropertyoftraceability,
+which allows to identify the user who signs two different messages with respect to the same ring.
+Thesecurityofthisconstructionisbasedonthehardnessofthesyndromedecodingproblem.The
+signature size is 240N kBytes, which might be too large for many applications.
+Multivariateapproach. Thefirstmultivariatequadraticpolynomials-basedringsignaturewasin-
+troducedin[ 151].Theschemeachievescompletenessandanonymityagainstfullkeyexposure.A
+moreefficientconstructionhasbeenproposedin[ 118].In[ 130]theauthorsprovidedthefirstmul-
+tivariate threshold ring signature scheme, which is an extension of the multivariate identification
+scheme[139].Eventhoughtheconstructionin[ 130]requiresmoreroundstoachievegivenlevels
+of security,the main advantage of the scheme is the shorter signature size than those obtained by
+other post-quantum approaches. The construction also achieves provable security, which is rare
+in multivariate cryptography.
+Discussion. Ring signatures have certain inherent limitations such as requiringO(N) sign-
+ing/verification times andO(N) storage/communication of public keys. Such linear barriers pre-
+vent their real-life use with large values ofN despite the appealing feature of a higher anonymity
+level for increasingN. This is, for example, one of the main reasons Monero cryptocurrency uses
+asmallringsizeof N = 11.Asa result,in termsofblockchainapplications,themain desideratum
+appears to be optimizing the performance for smallN.
+While the most efficient lattice-based and hash-based constructions scale polylogarithmically
+in the ring sizeN, code-based constructions can only achieve a linear signature size, which is the
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:25
+main drawback of code-based constructions. Finding new techniques to reduce the key and sig-
+nature sizes of code-based signatures is an open problem and offers directions for future research.
+Isogeny-basedschemesscalelogarithmicallywithringsizebutareslowerthantheirlattice-based
+counterparts. Multivariate constructions claim to achieve better efficiency than any other post-
+quantum ring signature constructions. For detailed evaluation of these results, see Table1.
+The computational speed of existing lattice-based ring signature proposals in the order of mil-
+liseconds is well within the requirements of major ring signature applications in the blockchain
+setting, such as the RingCT protocol used in Monero. In terms of the signature size, there is of
+courseasignificantincreasecomparedtopre-quantumproposals;however,thisoverheadappears
+tobeacommoncosttobepaidwhenupgradingtopost-quantumsecurity.Agoalforfuturework
+in this area could be to minimize the signature as well as public key lengths as much as possible.
+5 CONCLUSION
+This work surveys the extensive literature on post-quantum cryptographic schemes crucial for
+blockchains.Weparticularlyfocusonexoticsignaturesachievingadvancedfunctionalities,which
+enableempoweringfeaturesforblockchain.Foreachpresentedexoticsignature,wehaveincluded
+allknownconstructiontechniquesbasedondifferentquantum-safeassumptions(includinglattice-
+based, code-based, hash-based, multivariate-polynomial-based, and isogeny-based assumptions)
+and a discussion on existing challenges and future research directions for each one in the post-
+quantumspace.Wehavealsocomparedtheseexoticsignaturesintermsofthepromisedquantum
+security levels, signature generation and verification times, signature size, and the promised as-
+ymptotic complexity. We hope our work can help to promote further research on and adoption of
+post-quantum cryptography in the blockchain space.
+REFERENCES
+[1] M. Ajtai. 1996. Generating hard instances of lattice problems (extended abstract). InProceedings of the 28th Annual
+ACM Symposium on Theory of Computing (STOC’96). Association for Computing Machinery, New York, NY, 99–108.
+https://doi.org/10.1145/237814.237838
+[2] Martin R. Albrecht, Christian Rechberger, Thomas Schneider, Tyge Tiessen, and Michael Zohner. 2015. Ciphers for
+MPC and FHE. InAdvances in Cryptology (EUROCRYPT’15), Proceedings, Part I (LNCS), Elisabeth Oswald and Marc
+Fischlin (Eds.), Vol. 9056. Springer, 430–454.
+[3] NabilAlkeilaniAlkadri,RachidElBansarkhani,andJohannesBuchmann.2020.BLAZE:Practicallattice-basedblind
+signatures for privacy-preserving applications. InFinancial Cryptography and Data Security, Joseph Bonneau and
+Nadia Heninger (Eds.). Springer International Publishing, Cham, 484–502.
+[4] Nabil Alkeilani Alkadri, Rachid El Bansarkhani, and Johannes Buchmann. 2020. On lattice-based interactive pro-
+tocols: An approach with less or no aborts. InInformation Security and Privacy, Joseph K. Liu and Hui Cui (Eds.).
+Springer International Publishing, Cham, 41–61.
+[5] Gavin Andresen. 2011. BIP 0011: M-of-N Standard Transactions.https://en.bitcoin.it/wiki/BIP_0011.
+[6] FrankArute,KunalArya,RyanBabbush,DaveBacon,JosephC.Bardin,RamiBarends,RupakBiswas,SergioBoixo,
+Fernando G. S. L. Brandao, David A Buell, et al. 2019. Quantum supremacy using a programmable superconducting
+processor.Nature574, 7779 (2019), 505–510.
+[7] Lukas Aumayr, Oguzhan Ersoy, Andreas Erwig, Sebastian Faust, Kristina Hostáková, Matteo Maffei, Pedro
+Moreno-Sanchez, andSiavashRiahi.2020.Generalizedbitcoin-compatiblechannels. IACRCryptol.ePrintArch. 2020
+(2020), 476.
+[8] Reza Azarderakhsh, Matthew Campagna, Craig Costello, Luca De Feo, Basil Hess, Aaron Hutchinson, Amir Jalali,
+Koray Karabina, Brian Koziel, Brian LaMacchia, Patrick Longa, Michael Naehrig, Geovandro Pereira, Joost Renes,
+Vladimir Soukharev, and David Urbanik. 2017.Supersingular Isogeny Key Encapsulation. Technical Report.
+[9] Shi Bai and Steven D. Galbraith. 2014. An improved compression technique for signatures based on learning with
+errors. InCT-RSA(LNCS), Vol. 8366. Springer, 28–47.
+[10] Rachid El Bansarkhani, Mohamed Saied Emam Mohamed, and Albrecht Petzoldt. 2016. MQSAS - A multivariate se-
+quentialaggregatesignaturescheme.In InformationSecurity(ISC’16),Proceedings(LNCS) ,MattBishopandAnderson
+C. A. Nascimento (Eds.), Vol. 9866. Springer, 426–439.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:26 M. Buser et al.
+[11] ItanBarmesandBramBosch.[n.d.].QuantumcomputersandtheBitcoinblockchain. https://www2.deloitte.com/nl/
+nl/pages/innovatie/artikelen/quantum-computers-and-the-bitcoin-blockchain.html .
+[12] Carsten Baum, Cyprien Delpech de Saint Guilhem, Daniel Kales, Emmanuela Orsini, Peter Scholl, and Greg Za-
+verucha.2021.Banquet:ShortandfastsignaturesfromAES.In Public-KeyCryptography(PKC’21)-Proceedings,Part
+I (Lecture Notes in Computer Science), Juan A. Garay (Ed.), Vol. 12710. Springer, 266–297.
+[13] Eli Ben-Sasson, Iddo Bentov, Yinon Horesh, and Michael Riabzev. 2018. Scalable, transparent, and post-quantum
+secure computational integrity.IACR Cryptol. ePrint Arch.2018 (2018), 46.
+[14] Eli Ben-Sasson, Alessandro Chiesa, Michael Riabzev, Nicholas Spooner, Madars Virza, and Nicholas P. Ward. 2019.
+Aurora: Transparent succinct arguments for R1CS. InAdvances in Cryptology (EUROCRYPT’19), Proceedings, Part I
+(LNCS), Yuval Ishai and Vincent Rijmen (Eds.), Vol. 11476. Springer, 103–128.
+[15] Adam Bender, Jonathan Katz, and Ruggero Morselli. 2006. Ring signatures: Stronger definitions, and constructions
+without random oracles. InTCC (LNCS), Vol. 3876. Springer, 60–79.
+[16] Rikke Bendlin, Sara Krehbiel, and Chris Peikert. 2013. How to share a lattice trapdoor: Threshold protocols for
+signatures and (H)IBE. InACNS (Lecture Notes in Computer Science), Vol. 7954. Springer, 218–236.
+[17] Elwyn R. Berlekamp, Robert J. McEliece, and Henk C. A. van Tilborg. 1978. On the inherent intractability of certain
+coding problems (corresp.).IEEE Trans. Inf. Theory24, 3 (1978), 384–386.https://doi.org/10.1109/TIT.1978.1055873
+[18] WardBeullens.2022.Breakingrainbowtakesaweekendonalaptop. IACRCryptol.ePrintArch. (2022),214(toappear
+at CRYPTO’22).
+[19] Ward Beullens, Shuichi Katsumata, and Federico Pintore. 2020. Calamari and Falafl: Logarithmic (linkable) ring sig-
+natures from isogenies and lattices. InAdvances in Cryptology (ASIACRYPT’20), Shiho Moriai and Huaxiong Wang
+(Eds.). Springer International Publishing, Cham, 464–492.
+[20] Ward Beullens, Thorsten Kleinjung, and Frederik Vercauteren. 2019. CSI-FiSh: Efficient isogeny based signatures
+throughclassgroupcomputations.In AdvancesinCryptology(ASIACRYPT’19) ,StevenD.GalbraithandShihoMoriai
+(Eds.). Springer International Publishing, Cham, 227–247.
+[21] WardBeullens,BartPreneel,AlanSzepieniec,andFrederikVercauteren.2019.LUOV:Signatureschemeproposalfor
+NIST PQC project.Submission to the NIST’s post-quantum cryptography standardization process(2019).
+[22] Rishabh Bhadauria, Zhiyong Fang, Carmit Hazay, Muthuramakrishnan Venkitasubramaniam, Tiancheng Xie, and
+Yupeng Zhang. 2020. Ligero++: A new optimized sublinear IOP. InProceedings of the 2020 ACM SIGSAC Conference
+on Computer and Communications Security. 2025–2038.
+[23] Bitcoin Wiki. 2022. Script. Retrieved January 31, 2022, fromhttps://en.bitcoin.it/wiki/Script.
+[24] G.R.Blakley.1979.Safeguardingcryptographickeys.In ManagingRequirementsKnowledge,InternationalWorkshop
+on. IEEE Computer Society, Los Alamitos, CA, 313.https://doi.org/10.1109/AFIPS.1979.98
+[25] OlivierBlazy,PhilippeGaborit,JulienSchrek,andNicolasSendrier.2017.Acode-basedblindsignature.In 2017IEEE
+International Symposium on Information Theory (ISIT’17). IEEE, 2718–2722.
+[26] Dan Boneh, Özgür Dagdelen, Marc Fischlin, Anja Lehmann, Christian Schaffner, and Mark Zhandry. 2011. Random
+oracles in a quantum world. InAdvances in Cryptology (ASIACRYPT’11), Dong Hoon Lee and Xiaoyun Wang (Eds.).
+Springer, Berlin, 41–69.
+[27] DanBoneh,RosarioGennaro,StevenGoldfeder,AayushJain,SamKim,PeterM.R.Rasmussen,andAmitSahai.2018.
+Threshold cryptosystems from threshold fully homomorphic encryption. InAdvances in Cryptology (CRYPTO’18) -
+Proceedings, Part I. 565–596.
+[28] DanBoneh,CraigGentry,BenLynn,andHovavShacham.2003.Aggregateandverifiablyencryptedsignaturesfrom
+bilinear maps. InAdvances in Cryptology (EUROCRYPT’03), Proceedings (LNCS), Eli Biham (Ed.), Vol. 2656. Springer,
+416–432.
+[29] Dan Boneh and Mark Zhandry. 2013. Quantum-secure message authentication codes. InAdvances in Cryptology
+(EUROCRYPT’13), Thomas Johansson and Phong Q. Nguyen (Eds.). Springer, Berlin, 592–608.
+[30] SamuelBouaziz-Ermann,SébastienCanard,GautierEberhart,GuillaumeKaim,AdelineRoux-Langlois,andJacques
+Traoré. 2020. Lattice-based (Partially) Blind Signature without Restart. Cryptology ePrint Archive, Report 2020/260.
+(2020).https://eprint.iacr.org/2020/260.
+[31] KatharinaBoudgoustandAdelineRoux-Langlois.2021.Non-InteractiveHalf-AggregateSignaturesBasedonModule
+Lattices - A First Attempt. Cryptology ePrint Archive, Paper 2021/263. (2021).https://eprint.iacr.org/2021/263.
+[32] Zvika Brakerski, Craig Gentry, and Vinod Vaikuntanathan. 2014. (Leveled) fully homomorphic encryption without
+bootstrapping. ACM Trans. Comput. Theory6, 3 (2014), 13:1–13:36.
+[33] PedroBrancoandPauloMateus.2018.Acode-basedlinkableringsignaturescheme.In ProvableSecurity(ProvSec’18),
+Proceedings (LNCS), Joonsang Baek, Willy Susilo, and Jongkil Kim (Eds.), Vol. 11192. Springer, 203–219.
+[34] Pedro Branco and Paulo Mateus. 2019. A traceable ring signature scheme based on coding theory. InPost-Quantum
+Cryptography - 2019 Revised Selected Papers (LNCS), Jintai Ding and Rainer Steinwandt (Eds.), Vol. 11505. Springer,
+387–403.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:27
+[35] CarloBrunetta,BeiLiang,andAikateriniMitrokotsa.2019.Code-basedzeroknowledgePRFarguments.In Informa-
+tion Security - 22nd International Conference (ISC’19), Proceedings (LNCS), Zhiqiang Lin, Charalampos Papamanthou,
+and Michalis Polychronakis (Eds.), Vol. 11723. Springer, 171–189.
+[36] Christian Cachin and Marko Vukolic. 2017. Blockchain consensus protocols in the wild (keynote talk). InDISC’17
+(LIPIcs), Andrea W. Richa (Ed.), Vol. 91. Schloss Dagstuhl - Leibniz-Zentrum fur Informatik, 1:1–1:16.
+[37] TongCao,JiangshanYu,JérémieDecouchant,XiapuLuo,andPauloVeríssimo.2020.ExploringtheMoneropeer-to-
+peer network. InFinancial Cryptography and Data Security (FC’20) Revised Selected Papers (LNCS), Joseph Bonneau
+and Nadia Heninger (Eds.), Vol. 12059. Springer, 578–594.
+[38] Miguel Castro and Barbara Liskov. 2002. Practical byzantine fault tolerance and proactive recovery.ACM Trans.
+Comput. Syst.20, 4 (2002), 398–461.
+[39] WouterCastryckandThomasDecru.2022.AnefficientkeyrecoveryattackonSIDH(preliminaryversion).Cryptol-
+ogy ePrint Archive, Paper 2022/975. (2022).https://eprint.iacr.org/2022/975.
+[40] Wouter Castryck, Tanja Lange, Chloe Martindale, Lorenz Panny, and Joost Renes. 2018. CSIDH: An efficient post-
+quantum commutative group action. InAdvances in Cryptology (ASIACRYPT’18), Thomas Peyrin and Steven Gal-
+braith (Eds.). Springer International Publishing, 395–427.
+[41] Melissa Chase, David Derler, Steven Goldfeder, Claudio Orlandi, Sebastian Ramacher, Christian Rechberger, Daniel
+Slamanig,andGregZaverucha.2017.Post-quantumzero-knowledgeandsignaturesfromsymmetric-keyprimitives.
+InProceedings of the 2017 ACM Sigsac Conference on Computer and Communications Security. 1825–1842.
+[42] DavidChaum.1982.Blindsignaturesforuntraceablepayments.In AdvancesinCryptology:ProceedingsofCRYPTO’82 ,
+David Chaum, Ronald L. Rivest, and Alan T. Sherman (Eds.). Plenum Press, New York, NY, 199–203.
+[43] João Otávio Massari Chervinski, Diego Kreutz, and Jiangshan Yu. 2019. FloodXMR: Low-cost transaction flooding
+attack with Monero’s bulletproof protocol.IACR Cryptol. ePrint Arch.2019 (2019), 455.
+[44] NicolaDiChiano,RiccardoLongo,AlessioMeneghetti,andGiordanoSantilli.2021.AsurveyonNISTPQsignatures.
+CoRR abs/2107.11082 (2021).
+[45] Jean-MarcCouveignes.2006.HardHomogeneousSpaces.CryptologyePrintArchive,Report2006/291.(2006). https:
+//eprint.iacr.org/2006/291.
+[46] Daniele Cozzo and Nigel P. Smart. 2019. Sharing the LUOV: Threshold post-quantum signatures. InCryptography
+and Coding - 17th IMA International Conference (IMACC’19), Proceedings. 128–153.
+[47] Daniele Cozzo and Nigel P. Smart. 2020. Sashimi: Cutting up CSI-FiSh secret keys to produce an actively secure
+distributed signing protocol. InPost-Quantum Cryptography, Jintai Ding and Jean-Pierre Tillich (Eds.). Springer In-
+ternational Publishing, Cham, 169–186.
+[48] Kyle Croman, Christian Decker, Ittay Eyal, Adem Efe Gencer, Ari Juels, Ahmed E. Kosba, Andrew Miller, Prateek
+Saxena,ElaineShi,EminGunSirer,DawnSong,andRogerWattenhofer.2016.Onscalingdecentralizedblockchains
+- A position paper. InFC’16 (LNCS), Jeremy Clark, Sarah Meiklejohn, Peter Y. A. Ryan, Dan S. Wallach, Michael
+Brenner, and Kurt Rohloff (Eds.), Vol. 9604. Springer, 106–125.
+[49] CryptoNote Coins 2018. CryptoNote Currencies.https://cryptonote.org/coins/.
+[50] Léonard Dallot and Damien Vergnaud. 2009. Provably secure code-based threshold ring signatures. InCryptogra-
+phy and Coding, 12th IMA International Conference, Cryptography and Coding 2009. Proceedings (LNCS), Matthew G.
+Parker (Ed.), Vol. 5921. Springer, 222–235.
+[51] Ivan Damgård, Claudio Orlandi, Akira Takahashi, and Mehdi Tibouchi. 2021. Two-round n-out-of-n and multi-
+signatures and trapdoor commitment from lattices. InPKC’21, Part I. 99–130.
+[52] Luca De Feo and Steven D. Galbraith. 2019. SeaSign: Compact isogeny signatures from class group actions. InAd-
+vances in Cryptology (EUROCRYPT’19), Yuval Ishai and Vincent Rijmen (Eds.). Springer International Publishing,
+Cham, 759–789.
+[53] Luca De Feo and Michael Meyer. 2020. Threshold schemes from isogeny assumptions. InPublic-Key Cryptography
+(PKC’20),Aggelos Kiayias,Markulf Kohlweiss, Petros Wallden,andVassilis Zikas (Eds.).Springer InternationalPub-
+lishing, Cham, 187–212.
+[54] CyprienDelpechdeSaintGuilhem,LaurenDeMeyer,EmmanuelaOrsini,andNigelPSmart.2019.BBQ:UsingAES
+in picnic signatures. InInternational Conference on Selected Areas in Cryptography. Springer, 669–692.
+[55] JeremieDecouchant,DavidKozhaya,VincentRahli,andJiangshanYu.2022.DAMYSUS:StreamlinedBFTconsensus
+leveraging trusted components. InEuropean Conference on Computer Systems (EuroSys’22).
+[56] David Derler, Sebastian Ramacher, and Daniel Slamanig. 2018. Post-quantum zero-knowledge proofs for accumula-
+torswithapplicationstoringsignaturesfromsymmetric-keyprimitives.In InternationalConferenceonPost-Quantum
+Cryptography. Springer, 419–440.
+[57] Yvo Desmedt and Yair Frankel. 1992. Shared generation of authenticators and signatures. InAdvances in Cryptology
+(CRYPTO’91), Joan Feigenbaum (Ed.). Springer, Berlin, 457–469.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:28 M. Buser et al.
+[58] JintaiDingandDieterSchmidt.2005.Rainbow,anewmultivariablepolynomialsignaturescheme.In ACNS (Lecture
+Notes in Computer Science), Vol. 3531. 164–175.
+[59] Yarkin Doröz, Jeffrey Hoffstein, Joseph H. Silverman, and Berk Sunar. 2020. MMSAT: A scheme for multimessage
+multiuser signature aggregation.IACR Cryptol. ePrint Arch.2020 (2020), 520.
+[60] Thaddeus Dryja. [n.d.]. Discrete log contracts.https://adiabat.github.io/dlc.pdf.
+[61] LéoDucas,TancrèdeLepoint,VadimLyubashevsky,PeterSchwabe,GregorSeiler,andDamienStehlé.2018.Crystals–
+dilithium: Digital signatures from module lattices. InCHES, Vol. 2018-1.https://eprint.iacr.org/2017/633.pdf.
+[62] Rachid El Bansarkhani and Jan Sturm. 2016. An efficient lattice-based multisignature scheme with applications to
+bitcoins. InInternational Conference on Cryptology and Network Security. Springer, 140–155.
+[63] Muhammed F. Esgin, Oguzhan Ersoy, and Zekeriya Erkin. 2020. Post-quantum adaptor signatures and payment
+channel networks. InESORICS (2) (LNCS), Vol. 12309. Springer, 378–397.
+[64] MuhammedF.Esgin,RonSteinfeld,JosephK.Liu,andDongxiLiu.2019.Lattice-basedzero-knowledgeproofs:New
+techniquesforshorterandfasterconstructionsandapplications.In CRYPTO(1)(LNCS) ,Vol.11692.Springer,115–146.
+(Full version atia.cr/2019/445).
+[65] Muhammed F. Esgin, Ron Steinfeld, Amin Sakzad, Joseph K. Liu, and Dongxi Liu. 2019. Short lattice-based one-out-
+of-manyproofsandapplicationstoringsignatures.In ACNS(LNCS).Springer,67–88.(Fullversionat ia.cr/2018/773).
+[66] Muhammed F. Esgin, Ron Steinfeld, and Raymond K. Zhao. 2022. MatRiCT+: More efficient post-quantum private
+blockchain payments. InIEEE Symposium on Security and Privacy. IEEE, 1281–1298. (Full version atia.cr/2021/545).
+[67] Muhammed F. Esgin, Raymond K. Zhao, Ron Steinfeld, Joseph K. Liu, and Dongxi Liu. 2019. MatRiCT: Efficient,
+scalableandpost-quantumblockchainconfidentialtransactionsprotocol.In ACMCCS2019,Proceedings .ACM,567–
+584. (Full version atia.cr/2019/1287).
+[68] Tiago M. Fernández-Caramés and Paula Fraga-Lamas. 2020. Towards post-quantum blockchain: A review on
+blockchain cryptography resistant to quantum computing attacks.IEEE Access8 (2020), 21091–21116.
+[69] AmosFiatandAdiShamir.1987.Howtoproveyourself:Practicalsolutionstoidentificationandsignatureproblems.
+In Advances in Cryptology (CRYPTO’ 86), Andrew M. Odlyzko (Ed.). Springer, Berlin, 186–194.
+[70] MarcFischlin.2006.Round-optimalcomposableblindsignaturesinthecommonreferencestringmodel.In Advances
+in Cryptology (CRYPTO’06), Cynthia Dwork (Ed.). Springer, Berlin, 60–77.
+[71] MasayukiFukumitsuandShingoHasegawa.2020.Alattice-basedprovablysecuremultisignatureschemeinquantum
+random oracle model. InProvSec’20. 45–64.
+[72] Philippe Gaborit, Olivier Ruatta, Julien Schrek, and Gilles Zémor. 2014. RankSign: An efficient signature algorithm
+based on the rank metric. InPost-Quantum Cryptography (PQCrypto’14), Proceedings (LNCS), Michele Mosca (Ed.),
+Vol. 8772. Springer, 88–107.
+[73] WenGao,YupuHu,BaocangWang,andJiaXie.2017.Identity-basedblindsignaturefromlatticesinstandardmodel.
+In Information Security and Cryptology, Kefei Chen, Dongdai Lin, and Moti Yung (Eds.). Springer International Pub-
+lishing, Cham, 205–218.
+[74] Rosario Gennaro, Steven Goldfeder, and Arvind Narayanan. 2016. Threshold-optimal DSA/ECDSA signatures and
+an application to bitcoin wallet security. InACNS’16, Proceedings. Springer, 156–174.
+[75] Rosario Gennaro, Stanisław Jarecki, Hugo Krawczyk, and Tal Rabin. 2001. Robust threshold DSS signatures.Infor-
+mation and Computation164, 1 (2001), 54–84.https://doi.org/10.1006/inco.2000.2881
+[76] Irene Giacomelli, Jesper Madsen, and Claudio Orlandi. 2016. Zkboo: Faster zero-knowledge for boolean circuits. In
+25th {Usenix}Security Symposium ({Usenix}Security 16). 1069–1083.
+[77] GuyGolan-Gueta,IttaiAbraham,ShellyGrossman,DahliaMalkhi,BennyPinkas,MichaelK.Reiter,Dragos-Adrian
+Seredinschi, Orr Tamir, and Alin Tomescu. 2019. SBFT: A scalable and decentralized trust infrastructure. In49th
+Annual IEEE/IFIP International Conference on Dependable Systems and Networks (DSN’19). IEEE, 568–580.
+[78] Shafi Goldwasser, Silvio Micali, and Charles Rackoff. 1985. The knowledge complexity of interactive proof-systems
+(extended abstract). InACM STOC’85, Proceedings, Robert Sedgewick (Ed.). ACM, 291–304.
+[79] LewisGudgeon,PedroMoreno-Sanchez,StefanieRoos,PatrickMcCorry,andArthurGervais.2020.SoK:Layer-two
+blockchain protocols. InFinancial Cryptography and Data Security (FC’20) Revised Selected Papers (Lecture Notes in
+Computer Science), Joseph Bonneau and Nadia Heninger (Eds.), Vol. 12059. Springer, 201–226.
+[80] Tim Güneysu, Vadim Lyubashevsky, and Thomas Pöppelmann. 2012. Practical lattice-based cryptography: A sig-
+nature scheme for embedded systems. InCryptographic Hardware and Embedded Systems (CHES’12), Proceedings.
+530–547.
+[81] Runchao Han, Haoyu Lin, and Jiangshan Yu. 2019. On the optionality and fairness of atomic swaps. InProceedings
+of the 1st ACM Conference on Advances in Financial Technologies (AFT’19). ACM, 62–75.
+[82] L.Harn.1994.Group-oriented (t,n) thresholddigitalsignatureschemeanddigitalmultisignature. IEEProceedings -
+Computers and Digital Techniques141, 5 (September 1994), 307–313(6).
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:29
+[83] Eduard Hauck, Eike Kiltz, Julian Loss, and Ngoc Khanh Nguyen. 2020. Lattice-based blind signatures, revisited. In
+Advances in Cryptology (CRYPTO’20), Daniele Micciancio and Thomas Ristenpart (Eds.). Springer International Pub-
+lishing, Cham, 500–529.
+[84] Jeffrey Hoffstein, Jill Pipher, John M. Schanck, Joseph H. Silverman, and William Whyte. 2014. Practical signatures
+from the partial fourier recovery problem. InApplied Cryptography and Network Security (ACNS’14). Proceedings.
+476–493.
+[85] YuvalIshai,EyalKushilevitz,RafailOstrovsky,andAmitSahai.2009.Zero-knowledgeproofsfromsecuremultiparty
+computation. SIAM J. Comput.39, 3 (2009), 1121–1152.
+[86] Kazuharu Itakura and Katsuhiro Nakamura. 1983. A public-key cryptosystem suitable for digital multisignatures.
+NEC Research & Development71 (1983), 1–8.
+[87] AbhishekJain,StephanKrenn,KrzysztofPietrzak,andArisTentes.2012.Commitmentsandefficientzero-knowledge
+proofs from learning parity with noise. InAdvances in Cryptology (ASIACRYPT’12), Proceedings (LNCS),X i a o y u n
+Wang and Kazue Sako (Eds.), Vol. 7658. Springer, 663–680.
+[88] David Jao and Luca De Feo. 2011. Towards quantum-resistant cryptosystems from supersingular elliptic curve iso-
+genies. InPost-Quantum Cryptography, Bo-Yin Yang (Ed.). Springer, Berlin, 19–34.
+[89] David Jao and Vladimir Soukharev. 2014. Isogeny-based quantum-resistant undeniable signatures. InPost-Quantum
+Cryptography, Michele Mosca (Ed.). Springer International Publishing, Cham, 160–179.
+[90] Ari Juels, Michael Luby, and Rafail Ostrovsky. 1997. Security of blind digital signatures. InAdvances in Cryptology
+(CRYPTO’97), Burton S. Kaliski (Ed.). Springer, Berlin, 150–164.
+[91] Daniel Kales and Greg Zaverucha. 2020. Improving the performance of the picnic signature scheme.IACR Transac-
+tions on Cryptographic Hardware and Embedded Systems(2020), 154–188.
+[92] Jonathan Katz, Vladimir Kolesnikov, and Xiao Wang. 2018. Improved non-interactive zero knowledge with applica-
+tions to post-quantum signatures. InACM SIGSAC CCS 2018, Proceedings. 525–537.
+[93] Amrit Kumar, Clément Fischer, Shruti Tople, and Prateek Saxena. 2017. A traceability analysis of Monero’s
+blockchain. InESORICS. 153–173.
+[94] Leslie Lamport. 1979.Constructing Digital Signatures from a One-way Function. Technical Report. Citeseer.
+[95] Adeline Langlois and Damien Stehlé. 2015. Worst-case to average-case reductions for module lattices.Des. Codes
+Cryptogr.75, 3 (2015), 565–599.
+[96] H.Q.Le,W.Susilo,T.X.Khuc,M.K.Bui,andD.H.Duong.2019.Ablindsignaturefrommodulelatices.In 2019IEEE
+Conference on Dependable and Secure Computing (DSC’19).1 – 8 .https://doi.org/10.1109/DSC47296.2019.8937613
+[97] A. K. Lenstra, H. W. Lenstra, and L. Lovász. [n.d.]. Factoring polynomials with rational coefficients.Math. Ann.
+261 ([n.d.]), 515–534.https://doi.org/10.1007/BF014
+[98] C. Liang, C. Yongquan, T. Xueming, H. Dongping, and W. Xin. 2011. Hierarchical ID-based blind signature from
+lattices. In2011 7th International Conference on Computational Intelligence and Security. 803–807.https://doi.org/10.
+1109/CIS.2011.182
+[99] Yehuda Lindell. 2017. Fast secure two-party ECDSA signing. InAdvances in Cryptology (CRYPTO’17), Proceedings,
+Part II (LNCS). Springer, 613–644.
+[100] Joseph K. Liu, Victor K. Wei, and Duncan S. Wong. 2004. Linkable spontaneous anonymous group signature for
+ad hoc groups. InInformation Security and Privacy, Huaxiong Wang, Josef Pieprzyk, and Vijay Varadharajan (Eds.).
+Springer, Berlin, 325–335.
+[101] XingyeLu,ManHoAu,andZhenfeiZhang.2019.Raptor:Apracticallattice-based(linkable)ringsignature.In ACNS
+(LNCS), Vol. 11464. Springer, 110–130.
+[102] Vadim Lyubashevsky. 2009. Fiat-Shamir with aborts: Applications to lattice and factoring-based signatures. InASI-
+ACRYPT. Springer, 598–616.
+[103] Vadim Lyubashevsky. 2012. Lattice signatures without trapdoors. InAdvances in Cryptology (EUROCRYPT’12), Pro-
+ceedings (LNCS). 738–755.
+[104] VadimLyubashevskyandDanieleMicciancio.2006.Generalizedcompactknapsacksarecollisionresistant.In ICALP
+(2) (Lecture Notes in Computer Science), Vol. 4052. Springer, 144–155.
+[105] VadimLyubashevsky,NgocKhanhNguyen,andGregorSeiler.2021.SMILE:SetMembershipfromIdealLatticeswith
+Applications to Ring Signatures and Confidential Transactions. Cryptology ePrint Archive, Report 2021/564. (2021).
+ia.cr/2021/564 (to appear at Crypto 2021).
+[106] Vadim Lyubashevsky, Chris Peikert, and Oded Regev. 2010. On ideal lattices and learning with errors over rings. In
+EUROCRYPT (Lecture Notes in Computer Science), Vol. 6110. Springer, 1–23.
+[107] Srinath M. S. and Venkatachalam Chandrasekaran. 2018. Isogeny-based quantum-resistant undeniable blind signa-
+ture scheme.International Journal of Network Security20 (2018), 9–18.https://doi.org/10.6633/IJNS.201801.20(1).02
+[108] Changshe Ma and Mei Jiang. 2019. Practical lattice-based multisignature schemes for blockchains.IEEE Access
+7 (2019), 179765–179778.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:30 M. Buser et al.
+[109] Luciano Maino and Chloe Martindale. 2022. An attack on SIDH with arbitrary starting curve. Cryptology ePrint
+Archive, Paper 2022/1026. (2022).https://eprint.iacr.org/2022/1026.
+[110] Giulio Malavolta, Pedro Moreno-Sanchez, Clara Schneidewind, Aniket Kate, and Matteo Maffei. 2019. Anonymous
+multi-hop locks for blockchain scalability and interoperability. InNDSS’19.https://www.ndss-symposium.org/ndss-
+paper/anonymous-multi-hop-locks-for-blockchain-scalability-and-interoperability/ .
+[111] Dahlia Malkhi and Michael K. Reiter. 1997. Byzantine quorum systems. InTheory of Computing.
+[112] Tsutomu Matsumoto and Hideki Imai. 1988. Public quadratic polynomial-tuples for efficient signature-verification
+and message-encryption. InAdvances in Cryptology (EUROCRYPT’88), D. Barstow, W. Brauer, P. Brinch Hansen,
+D. Gries, D. Luckham, C. Moler, A. Pnueli, G. Seegmüller, J.A Stoer, N. Wirth, and Christoph G. Günther (Eds.).
+Springer, Berlin, 419–453.
+[113] Gregory Maxwell, Andrew Poelstra, Yannick Seurin, and Pieter Wuille. 2019. Simple Schnorr multi-signatures with
+applications to bitcoin.Designs, Codes and Cryptography87, 9 (2019), 2139–2164.
+[114] RalphC.Merkle.1989.Acertifieddigitalsignature.In AdvancesinCryptology(CRYPTO’89),9thAnnualInternational
+CryptologyConference,Proceedings(LectureNotesinComputerScience) ,GillesBrassard(Ed.),Vol.435.Springer,218–
+238. https://doi.org/10.1007/0-387-34805-0_21
+[115] Simon-PhilippMerz,RomyMinko,andChristophePetit.2020.Anotherlookatsomeisogenyhardnessassumptions.
+In Topics in Cryptology (CT-RSA’20), Stanislaw Jarecki (Ed.). Springer International Publishing, Cham, 496–511.
+[116] Daniele Micciancio. 2007. Generalized compact knapsacks, cyclic lattices, and efficient one-way functions.Comput.
+Complex.16, 4 (2007), 365–411.https://doi.org/10.1007/s00037-007-0234-9
+[117] ArashMirzaei,AminSakzad,JiangshanYu,andRonSteinfeld.2021.FPPW:Afairandprivacypreservingwatchtower
+for bitcoin. InFC.
+[118] MohamedSaiedEmamMohamedandAlbrechtPetzoldt.2017.RingRainbow-Anefficientmultivariateringsignature
+scheme.In ProgressinCryptology(AFRICACRYPT’17),Proceedings(LNCS) ,MarcJoyeandAbderrahmaneNitaj(Eds.),
+Vol. 10239. 3–20.
+[119] Malte Möser, Kyle Soska, Ethan Heilman, Kevin Lee, Henry Heffan, Shashvat Srivastava, Kyle Hogan, Jason Hen-
+nessey, Andrew Miller, Arvind Narayanan, and Nicolas Christin. 2018. An empirical analysis of traceability in the
+monero blockchain.PoPETs2018, 3 (2018), 143–163.
+[120] Satoshi Nakamoto. 2009. Bitcoin: A Peer-to-Peer Electronic Cash System.https://bitcoin.org
+[121] Christopher Natoli, Jiangshan Yu, Vincent Gramoli, and Paulo Jorge Esteves Veríssimo. 2019. Deconstructing
+blockchains: A comprehensive survey on consensus, membership and structure.CoRR abs/1908.08316 (2019).http:
+//arxiv.org/abs/1908.08316
+[122] Shen Noether. 2015. Ring Signature Confidential Transactions for Monero. Cryptology ePrint Archive, Report
+2015/1098. (2015).ia.cr/2015/1098.
+[123] D. Papachristoudis, D. Hristu-Varsakelis, F. Baldimtsi, and G. Stephanides. 2019. Leakage-Resilient Lattice-Based
+Partially Blind Signatures. Cryptology ePrint Archive, Report 2019/1452. (2019)./eprint.iacr.org/2019/1452.
+[124] Jacques Patarin. 1996. Hidden fields equations (HFE) and isomorphisms of polynomials (IP): Two new families of
+asymmetricalgorithms.In AdvancesinCryptology(EUROCRYPT’96),Proceedings(LectureNotesinComputerScience) ,
+Ueli M. Maurer (Ed.), Vol. 1070. Springer, 33–48.
+[125] Jacques Patarin, Nicolas T. Courtois, and Louis Goubin. 2001. QUARTZ, 128-bit long digital signatures. InTopics in
+Cryptology(CT-RSA’01),TheCryptographer’sTrackatRSA2001,Proceedings(LNCS) ,DavidNaccache(Ed.),Vol.2020.
+Springer, 282–297.
+[126] Torben Pryds Pedersen. 1991. A threshold cryptosystem without a trusted party. InAdvances in Cryptology (EURO-
+CRYPT’91), Donald W. Davies (Ed.). Springer, Berlin, 522–526.
+[127] Edwin Pednault, John Gunnels, Dmitri Maslov, and Jay Gambetta. [n.d.]. On “Quantum Supremacy."https://www.
+ibm.com/blogs/research/2019/10/on-quantum-supremacy/.
+[128] Chris Peikert. 2020. He gives c-sieves on the CSIDH. InAdvances in Cryptology (EUROCRYPT’20), Anne Canteaut
+and Yuval Ishai (Eds.). Springer International Publishing, Cham, 463–492.
+[129] Chris Peikert and Alon Rosen. 2006. Efficient collision-resistant hashing from worst-case assumptions on cyclic
+lattices. InTCC (Lecture Notes in Computer Science), Vol. 3876. Springer, 145–166.
+[130] Albrecht Petzoldt, Stanislav Bulygin, and Johannes Buchmann. 2013. A multivariate based threshold ring signature
+scheme.Appl. Algebra Eng. Commun. Comput.24, 3–4 (2013), 255–275.
+[131] Albrecht Petzoldt, Alan Szepieniec, and Mohamed Saied Emam Mohamed. 2017. A practical multivariate blind sig-
+naturescheme.In FinancialCryptographyandDataSecurity(FC’17),RevisedSelectedPapers(LNCS) ,AggelosKiayias
+(Ed.), Vol. 10322. Springer, 437–454.
+[132] Andrew Poelstra. [n.d.]. Adaptor signatures and atomic swaps from scriptless scripts. https://github.com/
+ElementsProject/scriptless-scripts/blob/master/md/atomic-swap.md.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+A Survey on Exotic Signatures for Post-quantum Blockchain 251:31
+[133] Andrew Poelstra. [n.d.]. Scriptless Scripts. Presentation Slides. ([n.d.]).https://download.wpsoftware.net/bitcoin/
+wizardry/mw-slides/2017-05-milan-meetup/slides.pdf .
+[134] Oded Regev. 2005. On lattices, learning with errors, random linear codes, and cryptography. InProceedings of the
+37th Annual ACM Symposium on Theory of Computing, Harold N. Gabow and Ronald Fagin (Eds.). ACM, 84–93.
+https://doi.org/10.1145/1060590.1060603
+[135] RonaldL.Rivest,AdiShamir,andYaelTauman.2001.Howtoleakasecret.In AdvancesinCryptology(ASIACRYPT’01) ,
+Colin Boyd (Ed.). Springer, Berlin, 552–565.
+[136] DamienRobert.2022.BreakingSIDHinpolynomialtime.CryptologyePrintArchive,Paper2022/1038.(2022). https:
+//eprint.iacr.org/2022/1038.
+[137] MarkusRückert.2010.Lattice-basedblindsignatures.In AdvancesinCryptology(ASIACRYPT’10),Proceedings(LNCS) ,
+Masayuki Abe (Ed.), Vol. 6477. Springer, 413–430.
+[138] Rajeev Anand Sahu, Agnese Gini, and Ankan Pal. 2019. Supersingular Isogeny-Based Designated Verifier Blind Sig-
+nature. Cryptology ePrint Archive, Report 2019/1498. (2019).https://eprint.iacr.org/2019/1498.
+[139] Koichi Sakumoto, Taizo Shirai, and Harunaga Hiwatari. 2011. Public-key identification schemes based on multi-
+variate quadratic polynomials. InAdvances in Cryptology (CRYPTO’11), Proceedings (LNCS), Phillip Rogaway (Ed.),
+Vol. 6841. Springer, 706–723.
+[140] C. P. Schnorr. 1990. Efficient identification and signatures for smart cards. InAdvances in Cryptology (CRYPTO’89)
+Proceedings, Gilles Brassard (Ed.). Springer, New York, NY, 239–252.
+[141] Adi Shamir. 1979. How to share a secret.Commun. ACM22, 11 (Nov. 1979), 612–613.https://doi.org/10.1145/359168.
+359176
+[142] Peter W. Shor. 1994. Algorithms for quantum computation: Discrete logarithms and factoring. InFOCS’94. IEEE
+Computer Society, 124–134.
+[143] Damien Stehlé, Ron Steinfeld, Keisuke Tanaka, and Keita Xagawa. 2009. Efficient public key encryption based on
+ideal lattices. InASIACRYPT (Lecture Notes in Computer Science), Vol. 5912. Springer, 617–635.
+[144] Jacques Stern. 1993. A new identification scheme based on syndrome decoding. In Advances in Cryptology
+(CRYPTO’93), Proceedings (LNCS), Douglas R. Stinson (Ed.), Vol. 773. Springer, 13–21.
+[145] Erkan Tairi, Pedro Moreno-Sanchez, and Matteo Maffei. 2020. Post-Quantum Adaptor Signature for Privacy-
+Preserving Off-Chain Payments. Cryptology ePrint Archive, Report 2020/1345. (2020).https://eprint.iacr.org/2020/
+1345.
+[146] DominiqueUnruh.2015.Non-interactivezero-knowledgeproofsinthequantumrandomoraclemodel.In Advances
+in Cryptology (EUROCRYPT’15). 755–784.https://doi.org/10.1007/978-3-662-46803-6_25
+[147] LukeValentaandBrendanRowan.2015.Blindcoin:Blinded,accountablemixesforbitcoin.In FinancialCryptography
+and Data Security (FC’15) International Workshops, BITCOIN, WAHC, and Wearable, Revised Selected Papers (Lecture
+Notes in Computer Science), Michael Brenner,Nicolas Christin, BenjaminJohnson, and Kurt Rohloff (Eds.), Vol. 8976.
+Springer, 112–126.
+[148] LukeValentaandBrendanRowan.2015.Blindcoin:Blinded,accountablemixesforbitcoin.In FinancialCryptography
+and Data Security, Michael Brenner, Nicolas Christin, Benjamin Johnson, and Kurt Rohloff (Eds.). Springer, Berlin,
+112–126.
+[149] Nicolas van Saberhagen. 2012. CryptoNote v 1.0.https://cryptonote.org/whitepaper_v1.pdf
+[150] Marko Vukolic. 2015. The quest for scalable blockchain fabric: Proof-of-work vs. BFT replication. InIFIPWG114
+(LNCS), Jan Camenisch and Dogan Kesdogan (Eds.), Vol. 9591. Springer, 112–125.
+[151] Shangping Wang, Rui Ma, Yaling Zhang, and Xiaofeng Wang. 2011. Ring signature scheme based on multivariate
+public key cryptosystems.Comput. Math. Appl.62, 10 (2011), 3973–3979.
+[152] American National Standard X9.62-2005. 2005. Public key cryptography for the financial services industry: The
+elliptic curve digital signature algorithm (ECDSA).ANSI X9(2005), 163.
+[153] Xun Yi and Kwok-Yan Lam. 2019. A new blind ECDSA scheme for bitcoin transaction anonymity. InProceedings of
+the2019ACM(AsiaCCS’19) ,StevenD.Galbraith,GiovanniRussello,WillySusilo,DieterGollmann,EnginKirda,and
+Zhenkai Liang (Eds.). ACM, 613–620.
+[154] XunYi,XuechaoYang,AndreiKelarev,KwokYanLam,andZahirTari.2022. BlockchainFoundationsandApplications .
+Springer.
+[155] Maofan Yin, Dahlia Malkhi, Michael K. Reiter, Guy Golan-Gueta, and Ittai Abraham. 2019. HotStuff: BFT consensus
+withlinearityandresponsiveness.In Proceedingsofthe2019ACMSymposiumonPrinciplesofDistributedComputing .
+347–356.
+[156] Youngho Yoo, Reza Azarderakhsh, Amir Jalali, David Jao, and Vladimir Soukharev. 2017. A post-quantum digital
+signature scheme based on supersingular isogenies. InFinancial Cryptography and Data Security, Aggelos Kiayias
+(Ed.). Springer International Publishing, Cham, 163–181.
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.
+251:32 M. Buser et al.
+[157] Jiangshan Yu, Man Ho Allen Au, and Paulo Jorge Esteves Veríssimo. 2019. Re-thinking untraceability in the
+cryptonote-style blockchain. InIEEE CSF. 94–107.
+[158] Jiangshan Yu, David Kozhaya, Jeremie Decouchant, and Paulo Esteves-Verissimo. 2019. RepuCoin: Your reputation
+is your power.IEEE Transactions on Computers (ToC)68 (2019), 1225–1237.
+[159] ZuoxiaYu,ManHoAu,JiangshanYu,RupengYang,QiuliangXu,andWangFatLau.2019.Newempiricaltraceability
+analysisofcryptonote-styleblockchains.In FinancialCryptographyandDataSecurity(FC’19),RevisedSelectedPapers
+(Lecture Notes in Computer Science), Ian Goldberg and Tyler Moore (Eds.), Vol. 11598. Springer, 133–149.
+[160] TszHonYuen,MuhammedF.Esgin,JosephK.Liu,ManHoAu,andZhiminDing.2021.DualRing:Genericconstruc-
+tion of ring signatures with efficient instantiations. InCRYPTO (1) (Lecture Notes in Computer Science), Vol. 12825.
+Springer, 251–281.
+[161] Dong Zheng, Xiangxue Li, and Kefei Chen. 2007. Code-based ring signature scheme.Int. J. Netw. Secur.5, 2 (2007),
+154–157.
+[162] Hongfei Zhu, Yu an Tan, Xiaosong Zhang, Liehuang Zhu, Changyou Zhang, and Jun Zheng. 2017. A round-optimal
+lattice-based blind signature scheme for cloud services.Future Generation Computer Systems73 (2017), 106–114.
+https://doi.org/10.1016/j.future.2017.01.031
+Received 6 February 2022; revised 4 November 2022; accepted 8 November 2022
+ACM Computing Surveys, Vol. 55, No. 12, Article 251. Publication date: March 2023.

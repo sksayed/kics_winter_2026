@@ -1,0 +1,92 @@
+<mxfile host="65bd71144e">
+    <diagram name="System Architecture" id="system-arch">
+        <mxGraphModel dx="694" dy="583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="400" pageHeight="550" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="layer2-label" value="Layer 2: Off-Chain Scaling" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="20" y="10" width="360" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="iot1" value="IoT A" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+                    <mxGeometry x="50" y="50" width="50" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="iot2" value="IoT B" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+                    <mxGeometry x="130" y="40" width="50" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="iot3" value="IoT C" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+                    <mxGeometry x="210" y="40" width="50" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="iot4" value="IoT D" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+                    <mxGeometry x="290" y="40" width="50" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="channel" value="Payment Channels&#10;• Adaptor Signatures&#10;• Hash-Based ZKP (MPC-in-the-head)&#10;• Off-chain transactions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=8;align=left;verticalAlign=top;spacingLeft=3" vertex="1" parent="1">
+                    <mxGeometry x="100" y="110" width="200" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge1" value="" style="endArrow=classic;html=1;strokeWidth=1.5;strokeColor=#666666" parent="1" source="iot1" target="channel" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="200" as="sourcePoint"/>
+                        <mxPoint x="250" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge2" value="" style="endArrow=classic;html=1;strokeWidth=1.5;strokeColor=#666666" parent="1" source="iot2" target="channel" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="200" as="sourcePoint"/>
+                        <mxPoint x="250" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge3" value="" style="endArrow=classic;html=1;strokeWidth=1.5;strokeColor=#666666" parent="1" source="iot3" target="channel" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="200" as="sourcePoint"/>
+                        <mxPoint x="250" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge4" value="" style="endArrow=classic;html=1;strokeWidth=1.5;strokeColor=#666666" parent="1" source="iot4" target="channel" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="50" as="sourcePoint"/>
+                        <mxPoint x="250" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="settle" value="Settlement (3.5 KB)" style="endArrow=classic;html=1;strokeWidth=1.5;strokeColor=#0066CC;dashed=1;fontSize=8;align=center" edge="1" parent="1" source="channel" target="blockchain">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="320" as="sourcePoint"/>
+                        <mxPoint x="250" y="250" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="200" y="180"/>
+                            <mxPoint x="200" y="190"/>
+                        </Array>
+                        <mxPoint as="offset" x="0" y="-10"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="layer1-label">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="200" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="layer1-label" value="Layer 1: Hybrid Settlement Anchor (On-Chain)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="20" y="200" width="360" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="blockchain" value="Blockchain / On-Chain Settlement&#10;• Hybrid Key Exchange: HKDF(ECDHE || Kyber-768)&#10;• Dual Signature: Verify_Dilithium ∧ Verify_ECDSA&#10;• Channel Open/Close Only&#10;• Storage: 3.5 KB per settlement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;align=left;verticalAlign=top;spacingLeft=3" parent="1" vertex="1">
+                    <mxGeometry x="50" y="230" width="300" height="85" as="geometry"/>
+                </mxCell>
+                <mxCell id="keyex" value="Hybrid Key Exchange&#10;HKDF(ECDHE || Kyber-768)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=7" parent="1" vertex="1">
+                    <mxGeometry x="50" y="330" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="dualsig" value="Dual Signature&#10;Verify_Dilithium ∧ Verify_ECDSA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=7" parent="1" vertex="1">
+                    <mxGeometry x="210" y="330" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="keyex-conn" value="" style="endArrow=classic;html=1;strokeWidth=1.2;strokeColor=#6c8ebf" parent="1" source="keyex" target="blockchain" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="320" as="sourcePoint"/>
+                        <mxPoint x="250" y="270" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dualsig-conn" value="" style="endArrow=classic;html=1;strokeWidth=1.2;strokeColor=#6c8ebf" parent="1" source="dualsig" target="blockchain" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="200" y="320" as="sourcePoint"/>
+                        <mxPoint x="250" y="270" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
