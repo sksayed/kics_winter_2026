@@ -1,0 +1,11 @@
+[1] G. Chhetri, S. Somvanshi, P. Hebli, S. Brotee, and S. Das, "Post-Quantum Cryptography and Quantum-Safe Security: A Comprehensive Survey," arXiv preprint arXiv:2510.10436, Oct. 2025. [Online]. Available: https://arxiv.org/abs/2510.10436
+
+[2] S. Ahmadunnisa and S. E. Mathe, "A comprehensive review on hardware implementations of lattice-based cryptographic schemes," Journal of Systems Architecture, vol. 167, Art. no. 103486, Oct. 2025, doi: 10.1016/j.sysarc.2025.103486.
+
+[3] M. M. Saeed, "An AI-Driven Cybersecurity Framework for IoT: Integrating LSTM-Based Anomaly Detection, Reinforcement Learning, and Post-Quantum Encryption," IEEE Access, vol. 13, pp. 104027-104036, Jun. 2025, doi: 10.1109/ACCESS.2025.3576506.
+
+[4] S. Darzi, A. A. Yavuz, and R. Behnia, "Post-Quantum Security for Trustworthy Artificial Intelligence: An Emerging Frontier," in Proc. Conference'17, Washington, DC, USA, Jul. 2017, 2024.
+
+[5] K.-C. Chen, S. Y.-C. Chen, C.-Y. Liu, and K. K. Leung, "Federated Quantum Kernel Learning for Anomaly Detection in Multivariate IoT Time-Series," arXiv preprint arXiv:2511.02301, Nov. 2025. [Online]. Available: https://arxiv.org/abs/2511.02301
+
+[6] E. W. Abood, A. A. Yassin, Z. A. Abduljabbar, V. O. Nyangaresi, and A. H. Ali, "Provably lightweight and secure IoHT scheme with post-quantum cryptography and fog computing: A comprehensive scheme for healthcare system," MethodsX, vol. 15, Art. no. 103631, Dec. 2025, doi: 10.1016/j.mex.2025.103631.
